@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Mohamad El-Husseini</title>
+ <link href="http://mohamad.im/atom.xml" rel="self"/>
+ <link href="http://mohamad.im/"/>
+ <updated>2015-08-24T21:57:49-03:00</updated>
+ <id>http://mohamad.im</id>
+ <author>
+   <name>Mohamad El-Husseini</name>
+   <email>husseini.mel@gmail.com</email>
+ </author>
+
+ 
+
+</feed>
