@@ -71,7 +71,7 @@ This module adds a `before_action` that checks if the application is in maintena
 
 The feature is now complete. To use it, and enter maintenance mode, we set an `ENV` variable on Heroku.
 
-{% highlight unix %}
+{% highlight text %}
 heroku config:set MAINTENANCE_MODE=enabled
 {% endhighlight %}
 
@@ -79,13 +79,13 @@ It doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, f
 
 If we want to allow access to a specific IP address we set another `ENV` variable. Its value should be a coma-delimited list of any IP address that we want to enable access for.
 
-{% highlight unix %}
+{% highlight text %}
 heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
 {% endhighlight %}
 
 And finally, to exit maintenance mode.
 
-{% highlight unix %}
+{% highlight text %}
 heroku config:unset MAINTENANCE_MODE
 {% endhighlight %}
 
