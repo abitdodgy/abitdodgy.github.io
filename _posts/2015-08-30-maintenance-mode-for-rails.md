@@ -29,7 +29,7 @@ We then added a corresponding controller and view to display to the user when th
 
 The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
-Finally we added a controller concern and mixed it into application controller.
+Finally we added a controller concern and mixed it into `application_controller.rb`.
 
 	module MaintenanceMode
 	  extend ActiveSupport::Concern
@@ -57,6 +57,10 @@ Finally we added a controller concern and mixed it into application controller.
 	  def maintainer_ips
 	    ENV['MAINTAINER_IPS'] || String.new
 	  end
+	end
+
+	class ApplicationController < ActionController::Base
+	  before_filter :check_maintenance
 	end
 
 This adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
