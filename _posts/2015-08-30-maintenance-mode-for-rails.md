@@ -29,7 +29,7 @@ end
 
 The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
-Finally we added a controller concern and mixed it into `application_controller.rb`.
+Finally we added a controller concern that handles the logic and mixed it into `application_controller.rb`.
 
 {% highlight ruby %}
 module MaintenanceMode
@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
 end
 {% endhighlight %}
 
-This adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
+This module adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
 
 The feature is now complete. To use it, and enter maintenance mode, we set an `ENV` variable on Heroku.
 
@@ -75,9 +75,9 @@ The feature is now complete. To use it, and enter maintenance mode, we set an `E
 heroku config:set MAINTENANCE_MODE=enabled
 {% endhighlight %}
 
-It doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, for that matter), so *enabled* serves for clarity. The `ActiveSupport` concern we added checks for the presence of the variable and not its value.
+It doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, for that matter), so *enabled* serves for clarity. The logic checks for the presence of the variable, not its value.
 
-If we want to allow access to a specific IP address we set another `ENV` variable. Its value should be a coma-delimited list of the IPs that we want to allow access to.
+If we want to allow access to a specific IP address we set another `ENV` variable. Its value should be a coma-delimited list of any IP address that we want to enable access for.
 
 {% highlight unix %}
 heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
@@ -89,7 +89,7 @@ And finally, to exit maintenance mode.
 heroku config:unset MAINTENANCE_MODE
 {% endhighlight %}
 
-It's also very easy to test.
+Our module is also very easy to test.
 
 {% highlight ruby %}
 require 'test_helper'

@@ -11,6 +11,7 @@ description:         "Mohamad El-Husseini, sharing his brilliant thoughts."
 url:                 http://mohamad.im
 baseurl:             ''
 paginate:            5
+highlighter:         pygments
 
 # About/contact
 author:
