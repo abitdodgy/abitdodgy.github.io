@@ -10,13 +10,7 @@ There are several ways to implement a maintenance mode, but they typically work 
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-This means the application has to be involved; so we migrated the process into it. First, we added a route.
-
-{% highlight ruby %}
-get '/maintenance', to: 'downtime#show'
-{% endhighlight %}
-
-We then added a corresponding controller and a view to display to the user when the application is in maintenance mode. Now we can serve the page dynamically, and use I18n.
+This means the application has to be involved so it can determine how to handle the request, and what language to serve. We implemented this feature by adding a normal controller action that rendered the maintenance template.
 
 {% highlight ruby %}
 class DowntimeController < ApplicationController
@@ -27,9 +21,9 @@ class DowntimeController < ApplicationController
 end
 {% endhighlight %}
 
-The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
+The only code of interest here is the `skip_before_action` call; it ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
-Finally we added a controller concern that handles the logic and mixed it into `application_controller.rb`.
+We also added a concern to handle the logic, and mixed it into `application_controller.rb`.
 
 {% highlight ruby %}
 module MaintenanceMode
