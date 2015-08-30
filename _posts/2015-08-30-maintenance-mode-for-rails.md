@@ -1,35 +1,40 @@
+---
+layout: post
+title: How to add a dynamic maintenance mode to Rails
+---
+
 It's a good idea to have a maintenance strategy for your Rails application. You may want to temporarily disable access to the application while you carry out upgrades and run other tasks like database or server migrations.
 
-There are several ways to implement this, and they all have their own caveats. For our requirements we wanted to:
+While there are several ways to implement this, they all have their own caveats and none matched our requirements. We want to:
 
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-Heroku has a [built-in maintenace feature][1] that serves a static maintenace HTML page. When it's enabled it reroutes all requests to a static HTML page, bypassing the application server entirely. This means the feature fails both of our requirements. You can create a custom page, but you can not internationalize it. This means we can't serve a Portuguese page for our Brazilian users, and an English one for our English speaking users.
+Heroku has a built-in [maintenace feature][1]. When enabled it bypasses all requests to the application serve, and serves a static HTML page. This means the feature fails both of our requirements. You can create a custom page, but you can not internationalize it.
 
 We solved this by migrating the process into the application. First, we added a route.
 
 
-```
+````
 get '/maintenance', to: 'downtime#show'
-```
+````
 
 We then added a corresponding controller and view to display to the user when the application is in maintenance mode. This lets us serve the page dynamically, and use I18n.
 
-```
+````
 class DowntimeController < ApplicationController
   skip_before_action :check_maintenance_mode
 
   def show
   end
 end
-```
+````
 
 The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
 Then, we added a controller concern and mixed it into application controller.
 
-```
+````
 module MaintenanceMode
   extend ActiveSupport::Concern
 
@@ -57,34 +62,34 @@ private
     ENV['MAINTAINER_IPS'] || String.new
   end
 end
-```
+````
 
 This adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
 
 To enter maintenance mode we set an `ENV` variable on Heroku.
 
-```
+````
 heroku config:set MAINTENANCE_MODE=enabled
-```
+````
 
 It doesn't really matter what the value of `MAINTENANCE_MODE` is, so *enabled* serves for clarity. The concern we added checks for the presence of the var and not its value.
 
 To allow access to a specific IP we set another `ENV` variable and set its value to a coma-delimited list of IPs that we want to allow access to.
 
-```
+````
 heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
-```
+````
 
 And finally, to exit maintenance mode.
 
 
-```
+````
 heroku config:unset MAINTENANCE_MODE
-```
+````
 
 It's also very easy to test.
 
-```ruby
+````
 require 'test_helper'
 
 class MaintenanceModeTest < ActionDispatch::IntegrationTest
@@ -108,6 +113,6 @@ class MaintenanceModeTest < ActionDispatch::IntegrationTest
     assert_equal root_path, path
   end
 end
-```
+````
 
 [1]: https://devcenter.heroku.com/articles/maintenance-mode
