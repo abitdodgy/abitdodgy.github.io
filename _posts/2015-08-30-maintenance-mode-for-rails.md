@@ -7,14 +7,16 @@ There are several ways to implement this, and they all have their own caveats. F
 
 Heroku has a [built-in maintenace feature][1] that serves a static maintenace HTML page. When it's enabled it reroutes all requests to a static HTML page, bypassing the application server entirely. This means the feature fails both of our requirements. You can create a custom page, but you can not internationalize it. This means we can't serve a Portuguese page for our Brazilian users, and an English one for our English speaking users.
 
-So we solved this by migrating the process into the application. First, we added a route and its corresponding controller and view to display to the user when the application is in maintenance mode. This lets us serve the page dynamically, and using the right language.
+We solved this by migrating the process into the application. First, we added a route.
 
 
-```ruby
+```
 get '/maintenance', to: 'downtime#show'
 ```
 
-```ruby
+We then added a corresponding controller and view to display to the user when the application is in maintenance mode. This lets us serve the page dynamically, and use I18n.
+
+```
 class DowntimeController < ApplicationController
   skip_before_action :check_maintenance_mode
 
@@ -23,11 +25,11 @@ class DowntimeController < ApplicationController
 end
 ```
 
-The `skip_before_action` is to make sure we don't check for maintenance mode when we are viewing the maintenance page. This stops us from going into an infinite loop.
+The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
 Then, we added a controller concern and mixed it into application controller.
 
-```ruby
+```
 module MaintenanceMode
   extend ActiveSupport::Concern
 
