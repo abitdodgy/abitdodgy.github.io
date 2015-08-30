@@ -3,14 +3,14 @@ layout: post
 title: Adding a dynamic maintenance mode to a Rails app
 ---
 
-During the past month we've been busy introducing new features and making changes to our application, Nimbus Work Spaces. On a few occasions we needed to temporarily disable access to the application while we carried out migrations and tests. The first couple of times we disabled access with a controller `before_action` that redirected to a maintenance page unless the current user id was whitelisted. But it soon became clear that having a proper and scalable maintenance strategy is necessary.
-
-There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenace feature][1] that works in a similar way, for example. Unfortuntely such solutions aren't dynamic, and thus fail our requirements. We want to:
+During the past month we've been busy introducing new features and making changes to our application, Nimbus Work Spaces. On a few occasions we needed to temporarily disable access to the application while we carried out migrations and tests. The first couple of times we disabled access using a `before_action` that redirected to a maintenance page unless the current user id was whitelisted. But it became clear that having a proper and scalable maintenance strategy is necessary. We have two requirements:
 
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-This means the requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rail's built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an `ENV` variable respectively.
+There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenace feature][1] that works in a similar way, for example. Unfortuntely such solutions aren't dynamic, and thus fail our requirements.
+
+To meet our requirements requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rails' built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an `ENV` variable respectively.
 
 {% highlight ruby %}
 class DowntimeController < ApplicationController
@@ -63,7 +63,7 @@ end
 
 This module adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
 
-The feature is now complete. To use it, and enter maintenance mode, we set an `ENV` variable on Heroku.
+To enter maintenance mode we set an `ENV` variable on Heroku.
 
 {% highlight text %}
 heroku config:set MAINTENANCE_MODE=enabled
@@ -71,7 +71,7 @@ heroku config:set MAINTENANCE_MODE=enabled
 
 It doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, for that matter), so *enabled* serves for clarity. The logic checks for the presence of the variable, not its value.
 
-If we want to allow access to a specific IP address we set another `ENV` variable. Its value should be a coma-delimited list of any IP address that we want to enable access for.
+To allow access to an IP address we set another `ENV` variable. Its value should be a coma-delimited list of IP addresses that we want to enable access for.
 
 {% highlight text %}
 heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
@@ -99,12 +99,18 @@ class MaintenanceModeTest < ActionDispatch::IntegrationTest
     ENV.delete('MAINTAINER_IPS')
   end
 
-  test "redirects to maintenance path when in maintenance mode" do
+  test "doesn't show maintenance page when mode is disabled" do
+    ENV['MAINTENANCE_MODE'] = nil
     get root_path
     assert_redirected_to maintenance_path
   end
 
-  test "doesn't redirect to maintenance path when IP is whitelisted" do
+  test "shows maintenance page when mode is enabled" do
+    get root_path
+    assert_redirected_to maintenance_path
+  end
+
+  test "doesn't show maintenance page when IP is whitelisted" do
     get root_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
     assert_equal root_path, path
   end
