@@ -10,13 +10,9 @@ While there are several ways to implement this, they typically work by bypassing
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-
 This means the application has to be involved; so we migrated the process into it. First, we added a route.
 
-
-````
-get '/maintenance', to: 'downtime#show'
-````
+	get '/maintenance', to: 'downtime#show'
 
 We then added a corresponding controller and view to display to the user when the application is in maintenance mode. Now we can serve the page dynamically, and use I18n.
 
@@ -67,24 +63,17 @@ This adds a `before_action` that checks if the application is in maintenance mod
 
 To enter maintenance mode we set an `ENV` variable on Heroku.
 
-````
-heroku config:set MAINTENANCE_MODE=enabled
-````
+	heroku config:set MAINTENANCE_MODE=enabled
 
 It doesn't really matter what the value of `MAINTENANCE_MODE` is, so *enabled* serves for clarity. The concern we added checks for the presence of the var and not its value.
 
-To allow access to a specific IP we set another `ENV` variable and set its value to a coma-delimited list of IPs that we want to allow access to.
+To allow access to a specific IP we set another `ENV` variable, and set its value to a coma-delimited list of IPs that we want to allow access to.
 
-````
-heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
-````
+	heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
 
 And finally, to exit maintenance mode.
 
-
-````
-heroku config:unset MAINTENANCE_MODE
-````
+	heroku config:unset MAINTENANCE_MODE
 
 It's also very easy to test.
 
