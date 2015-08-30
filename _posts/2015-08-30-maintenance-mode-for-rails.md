@@ -5,12 +5,12 @@ title: Adding a dynamic maintenance mode to a Rails app
 
 During the past month we've been busy introducing new features and making changes to our application, Nimbus Work Spaces. On a few occasions we needed to temporarily disable access to the application while we carried out migrations and tests. The first couple of times we disabled access with a controller `before_action` that redirected to a maintenance page unless the current user id was whitelisted. But it soon became clear that having a proper and scalable maintenance strategy is necessary.
 
-There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenace feature][1] that works in a similar way. When enabled it serves a static HTML template. Unfortuntely such solutions aren't dynamic, and thus fail our requirements. We want to:
+There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenace feature][1] that works in a similar way, for example. Unfortuntely such solutions aren't dynamic, and thus fail our requirements. We want to:
 
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-This means the application has to be involved so it can determine how to handle the request, and what language to serve. We implemented this feature by adding a normal controller action that rendered the maintenance template.
+This means the requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rail's built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an `ENV` variable respectively.
 
 {% highlight ruby %}
 class DowntimeController < ApplicationController
@@ -57,7 +57,7 @@ end
 
 {% highlight ruby %}
 class ApplicationController < ActionController::Base
-  before_filter :check_maintenance
+  include MaintenanceMode
 end
 {% endhighlight %}
 
