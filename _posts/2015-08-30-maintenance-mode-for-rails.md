@@ -11,14 +11,14 @@ While there are several ways to implement this, they typically work by bypassing
 2. Serve a custom, internationalized template.
 
 
-We solved this by migrating the process into the application. First, we added a route.
+This means the application has to be involved; so we migrated the process into it. First, we added a route.
 
 
 ````
 get '/maintenance', to: 'downtime#show'
 ````
 
-We then added a corresponding controller and view to display to the user when the application is in maintenance mode. This lets us serve the page dynamically, and use I18n.
+We then added a corresponding controller and view to display to the user when the application is in maintenance mode. Now we can serve the page dynamically, and use I18n.
 
 ````
 class DowntimeController < ApplicationController
@@ -31,7 +31,7 @@ end
 
 The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
-Then, we added a controller concern and mixed it into application controller.
+Finally we added a controller concern and mixed it into application controller.
 
 ````
 module MaintenanceMode
