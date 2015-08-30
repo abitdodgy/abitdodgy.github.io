@@ -20,48 +20,44 @@ get '/maintenance', to: 'downtime#show'
 
 We then added a corresponding controller and view to display to the user when the application is in maintenance mode. Now we can serve the page dynamically, and use I18n.
 
-````
-class DowntimeController < ApplicationController
-  skip_before_action :check_maintenance_mode
+	class DowntimeController < ApplicationController
+	  skip_before_action :check_maintenance_mode
 
-  def show
-  end
-end
-````
+	  def show
+	  end
+	end
 
 The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
 
 Finally we added a controller concern and mixed it into application controller.
 
-````
-module MaintenanceMode
-  extend ActiveSupport::Concern
+	module MaintenanceMode
+	  extend ActiveSupport::Concern
 
-  included do
-    before_action :check_maintenance_mode
-  end
+	  included do
+	    before_action :check_maintenance_mode
+	  end
 
-private
+	private
 
-  def check_maintenance_mode
-    if maintenance_mode?
-      redirect_to maintenance_path unless permitted_ip?
-    end
-  end
+	  def check_maintenance_mode
+	    if maintenance_mode?
+	      redirect_to maintenance_path unless permitted_ip?
+	    end
+	  end
 
-  def maintenance_mode?
-    ENV['MAINTENANCE_MODE']
-  end
+	  def maintenance_mode?
+	    ENV['MAINTENANCE_MODE']
+	  end
 
-  def permitted_ip?
-    maintainer_ips.split(',').include?(request.remote_ip)
-  end
+	  def permitted_ip?
+	    maintainer_ips.split(',').include?(request.remote_ip)
+	  end
 
-  def maintainer_ips
-    ENV['MAINTAINER_IPS'] || String.new
-  end
-end
-````
+	  def maintainer_ips
+	    ENV['MAINTAINER_IPS'] || String.new
+	  end
+	end
 
 This adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
 
@@ -88,30 +84,28 @@ heroku config:unset MAINTENANCE_MODE
 
 It's also very easy to test.
 
-````
-require 'test_helper'
+	require 'test_helper'
 
-class MaintenanceModeTest < ActionDispatch::IntegrationTest
-  setup do
-    ENV['MAINTENANCE_MODE'] = 'enabled'
-    ENV['MAINTAINER_IPS'] = '1.2.3.4'
-  end
+	class MaintenanceModeTest < ActionDispatch::IntegrationTest
+	  setup do
+	    ENV['MAINTENANCE_MODE'] = 'enabled'
+	    ENV['MAINTAINER_IPS'] = '1.2.3.4'
+	  end
 
-  teardown do
-    ENV.delete('MAINTENANCE_MODE')
-    ENV.delete('MAINTAINER_IPS')
-  end
+	  teardown do
+	    ENV.delete('MAINTENANCE_MODE')
+	    ENV.delete('MAINTAINER_IPS')
+	  end
 
-  test "redirects to maintenance path when in maintenance mode" do
-    get root_path
-    assert_redirected_to maintenance_path
-  end
+	  test "redirects to maintenance path when in maintenance mode" do
+	    get root_path
+	    assert_redirected_to maintenance_path
+	  end
 
-  test "does not redirect to maintenance path when IP is white listed" do
-    get root_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
-    assert_equal root_path, path
-  end
-end
-````
+	  test "does not redirect to maintenance path when IP is white listed" do
+	    get root_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
+	    assert_equal root_path, path
+	  end
+	end
 
 [1]: https://devcenter.heroku.com/articles/maintenance-mode
