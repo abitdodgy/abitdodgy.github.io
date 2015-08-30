@@ -104,7 +104,7 @@ class MaintenanceModeTest < ActionDispatch::IntegrationTest
     assert_redirected_to maintenance_path
   end
 
-  test "does not redirect to maintenance path when IP is whitelisted" do
+  test "doesn't redirect to maintenance path when IP is whitelisted" do
     get root_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
     assert_equal root_path, path
   end
