@@ -1,16 +1,15 @@
 ---
 layout: post
-title: Adding a dynamic maintenance mode to Rails
+title: Adding a dynamic maintenance mode to a Rails app
 ---
 
 It's a good idea to have a maintenance strategy for your Rails application. You may want to temporarily disable access to the application while you carry out upgrades and run other tasks like database or server migrations.
 
-While there are several ways to implement this, they typically bypass requests to the application server and serve a static HTML page. This fails our requirements, which are to:
+While there are several ways to implement this, they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenace feature][1] that works in a similar way. When enabled it serves a static HTML template. Unfortuntely, such solutions fail our requirements. We want to:
 
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-Heroku has a built-in [maintenace feature][1]. When enabled it bypasses all requests to the application serve, and serves a static HTML page. This means the feature fails both of our requirements. You can create a custom page, but you can not internationalize it.
 
 We solved this by migrating the process into the application. First, we added a route.
 
