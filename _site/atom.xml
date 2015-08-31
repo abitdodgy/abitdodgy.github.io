@@ -4,7 +4,7 @@
  <title>Mohamad El-Husseini</title>
  <link href="http://mohamad.im/atom.xml" rel="self"/>
  <link href="http://mohamad.im/"/>
- <updated>2015-08-30T19:16:53-03:00</updated>
+ <updated>2015-08-30T21:28:21-03:00</updated>
  <id>http://mohamad.im</id>
  <author>
    <name>Mohamad El-Husseini</name>
@@ -24,7 +24,7 @@
   &lt;li&gt;Serve a custom, internationalized template.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in &lt;a href=&quot;https://devcenter.heroku.com/articles/maintenance-mode&quot;&gt;maintenace feature&lt;/a&gt; that works in a similar way, for example. Unfortuntely such solutions aren’t dynamic, and thus fail our requirements.&lt;/p&gt;
+&lt;p&gt;There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in &lt;a href=&quot;https://devcenter.heroku.com/articles/maintenance-mode&quot;&gt;maintenance feature&lt;/a&gt; that works in a similar way, for example. Unfortunately such solutions aren’t dynamic, and thus fail our requirements.&lt;/p&gt;
 
 &lt;p&gt;To meet our requirements requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rails’ built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an &lt;code&gt;ENV&lt;/code&gt; variable respectively.&lt;/p&gt;
 
@@ -79,7 +79,7 @@
 
 &lt;p&gt;It doesn’t really matter what the value of &lt;code&gt;MAINTENANCE_MODE&lt;/code&gt; is (or its name, for that matter), so &lt;em&gt;enabled&lt;/em&gt; serves for clarity. The logic checks for the presence of the variable, not its value.&lt;/p&gt;
 
-&lt;p&gt;To allow access to an IP address we set another &lt;code&gt;ENV&lt;/code&gt; variable. Its value should be a coma-delimited list of IP addresses that we want to enable access for.&lt;/p&gt;
+&lt;p&gt;To allow access to an IP address we set another &lt;code&gt;ENV&lt;/code&gt; variable. Its value should be a comma-delimited list of IP addresses that we want to enable access for.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 

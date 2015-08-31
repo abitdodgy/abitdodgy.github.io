@@ -5,6 +5,7 @@
 <!-- Toggleable sidebar -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-item">
+    <img src="{{ site.baseurl }}/public/mohamad.jpg">
     <p>{{ site.description }}</p>
   </div>
 
@@ -25,7 +26,20 @@
       {% endif %}
     {% endfor %}
 
-    <span class="sidebar-nav-item">Currently v{{ site.version }}</span>
+    <a class="sidebar-nav-item" href="https://twitter.com/@abitdodgy">
+      <img src="{{ site.baseurl }}/public/twitter_logo.png" width="24px" height="24px" style="float: right; margin: 0;">
+      @abitdodgy on Twitter
+    </a>
+
+    <a class="sidebar-nav-item" href="https://github.com/abitdodgy">
+      <img src="{{ site.baseurl }}/public/github_logo.png" width="20px" height="20px" style="float: right; margin: 0;">
+      My GitHub profile
+    </a>
+
+    <a class="sidebar-nav-item" href="https://instagram.com/abitdodgy">
+      <img src="{{ site.baseurl }}/public/instagram_logo.png" width="24px" height="24px" style="float: right; margin: 0;">
+      I'm on Instagram
+    </a>
   </nav>
 
   <div class="sidebar-item">

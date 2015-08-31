@@ -8,7 +8,7 @@ During the past month we've been busy introducing new features and making change
 1. Allow access to some users while the application is in maintenance mode.
 2. Serve a custom, internationalized template.
 
-There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenace feature][1] that works in a similar way, for example. Unfortuntely such solutions aren't dynamic, and thus fail our requirements.
+There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenance feature][1] that works in a similar way, for example. Unfortunately such solutions aren't dynamic, and thus fail our requirements.
 
 To meet our requirements requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rails' built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an `ENV` variable respectively.
 
@@ -71,7 +71,7 @@ heroku config:set MAINTENANCE_MODE=enabled
 
 It doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, for that matter), so *enabled* serves for clarity. The logic checks for the presence of the variable, not its value.
 
-To allow access to an IP address we set another `ENV` variable. Its value should be a coma-delimited list of IP addresses that we want to enable access for.
+To allow access to an IP address we set another `ENV` variable. Its value should be a comma-delimited list of IP addresses that we want to enable access for.
 
 {% highlight text %}
 heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
