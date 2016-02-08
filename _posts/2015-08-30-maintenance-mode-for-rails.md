@@ -3,49 +3,67 @@ layout: post
 title: Adding a dynamic maintenance mode to a Rails app
 ---
 
-During the past month we've been busy introducing new features and making changes to our application, Nimbus Work Spaces. On a few occasions we needed to temporarily disable access to the application while we carried out migrations and tests. The first couple of times we disabled access using a `before_action` that redirected to a maintenance page unless the current user id was whitelisted. But it became clear that having a proper and scalable maintenance strategy is necessary. We have two requirements:
+In an ideal world, you would update your application with zero downtime, and your users would be rewarded with snazzy new features without noticing how they got there. Of course, this is not always the case. There are times when downtime is inevitable. Having a proper and scalable maintenance strategy to deal with downtime is necessary, especially when making changes to the database. The following post describes one strategy that we've implemented in one of our apps.
 
-1. Allow access to some users while the application is in maintenance mode.
+For this feature we have two requirements:
+
+1. Allow access for some users while the application is undergoing maintenance.
 2. Serve a custom, internationalized template.
 
-There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in [maintenance feature][1] that works in a similar way, for example. Unfortunately such solutions aren't dynamic, and thus fail our requirements.
+There are several ways to implement a maintenance strategy, but they typically work by bypassing requests to the application server and serving a static HTML page. Heroku has a built-in [maintenance feature][1] that works in a similar way. But it does not meet our requirements because it blocks access to the app entirely, and we have no control over the template served.
 
-To meet our requirements requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rails' built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an `ENV` variable respectively.
+To meet our requirements requests must hit the application so that it can determine how to handle each request, and what language to serve to the user. This can be easily implemented with the help of `ENV` variables, a controller action, and Rails' built in I18n library.
+
+## Remembering the user's location
+
+For better usability, we should have a way to remember the user's intended location before redirecting him or her away. This way, when the app exits maintenance, we can redirect the user back to the page they originally wanted. This is sometimes referred to as *friendly forwarding*. Friendly forwarding is a feature we can reuse in other places, so it's a good idea to implement it in a concern[^2] and mix it into `application_controller.rb`.
 
 {% highlight ruby %}
-class DowntimeController < ApplicationController
-  skip_before_action :check_maintenance_mode
+# app/controllers/concerns/friendly_forwarding.rb
+def redirect_back_or(default, options = {})
+  location = session.delete(:forwarding_url) || default
+  redirect_to location, options
+end
 
-  def show
-  end
+def store_location
+  session[:forwarding_url] = request.url if request.get?
 end
 {% endhighlight %}
 
-The only code of interest here is the `skip_before_action` call; it ensures that we don't check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.
+When called, the `store_location` method will save the request URL in the session, but only if it's a GET request [^1]. The `redirect_back_or` method takes a default route to use if no forwarding URL is present in the session, and an options hash. This way we can forward a flash message or any option that [`redirect_to`][2] accepts.
 
-We also added a concern to handle the logic, and mixed it into `application_controller.rb`.
+## Maintenance mode
+
+For the actual logic, we will also use a concern that we'll mix into `application_controller.rb`.
 
 {% highlight ruby %}
 module MaintenanceMode
   extend ActiveSupport::Concern
 
   included do
-    before_action :check_maintenance_mode
+    before_action :handle_maintenance
   end
 
 private
 
-  def check_maintenance_mode
-    if maintenance_mode?
-      redirect_to maintenance_path unless permitted_ip?
+  def handle_maintenance
+    if maintenance_mode_enabled?
+      unless remote_address_whitelisted?
+        store_location
+        redirect_to maintenance_path
+      end
     end
   end
 
-  def maintenance_mode?
-    ENV['MAINTENANCE_MODE']
+  def maintenance_mode_enabled?
+    ENV['MAINTENANCE_MODE'].present?
   end
 
-  def permitted_ip?
+  def maintenance_mode_disabled?
+    !maintenance_mode_enabled?
+  end
+
+  def remote_address_whitelisted?
     maintainer_ips.split(',').include?(request.remote_ip)
   end
 
@@ -55,68 +73,158 @@ private
 end
 {% endhighlight %}
 
+The `MaintenanceMode` concern adds a `before_action` that redirects to the maintenance page if the mode is enabled unless the current IP address is whitelisted. Both maintenance mode and whitelisted IP addresses are stored in *ENV* variables.
+
+Now that our concerns are ready we should mix them into the application controller.
+
 {% highlight ruby %}
 class ApplicationController < ActionController::Base
+  include FriendlyForwarding
   include MaintenanceMode
 end
 {% endhighlight %}
 
-This module adds a `before_action` that checks if the application is in maintenance mode, and does any work required.
+All that remains is to add a controller that renders the maintenance page, a route, and some tests.
 
-To enter maintenance mode we set an `ENV` variable on Heroku.
+{% highlight ruby %}
+# config/routes.rb
+get :maintenance, to: 'maintenance#show'
+{% endhighlight %}
+
+{% highlight ruby %}
+class MaintenanceController < ApplicationController
+  skip_before_action :handle_maintenance
+
+  def show
+    render :show, status: 503
+  end
+end
+{% endhighlight %}
+
+The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page itself. This stops the application from going into an infinite loop. We also have to explicitly use `render` so that we can set the HTTP status code to to *503*, which stands for `:service_unavailable`. The default status code in Rails is *200*, or `:success`.
+
+We could stop now, but for better usability we should redirect away from the maintenance page and back to the app if the mode is disabled. This is a small change, and it's important--especially if your maintenance page is minimalistic, and has no navigation--because some users will refresh the page hoping that the maintenance page will go away by itself. If you don't redirect the user back, he or she could be stuck until frustrated enough to type the app's URL in the address bar. Plus, we made the effort to add friendly forwarding, and unless we make this change we will not have a chance to use it.
+
+Inside the show action we want to redirect back to the application under two conditions:
+
+1. If maintenance mode is disabled.
+2. If the IP address is whitelisted.
+
+We can use a before filter to add this extra functionality.
+
+{% highlight ruby %}
+class MaintenanceController < ApplicationController
+  # ...
+  before_action :redirect_if_maintenance_disabled
+  # ...
+
+private
+
+  def redirect_if_maintenance_disabled
+    if maintenance_mode_disabled? || remote_address_whitelisted?
+      redirect_back_or root_path
+    end
+  end
+end
+{% endhighlight %}
+
+## Using it
+
+To enter the application into maintenance mode, we set an `ENV` variable on Heroku.
 
 {% highlight text %}
 heroku config:set MAINTENANCE_MODE=enabled
 {% endhighlight %}
 
-It doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, for that matter), so *enabled* serves for clarity. The logic checks for the presence of the variable, not its value.
+From the app's perspective, it doesn't really matter what the value of `MAINTENANCE_MODE` is (or its name, for that matter), so *enabled* serves for clarity. Our logic checks for the presence of the variable, not its value.
 
-To allow access to an IP address we set another `ENV` variable. Its value should be a comma-delimited list of IP addresses that we want to enable access for.
+To allow access to an IP address, we set another `ENV` variable. Its value should be a comma-delimited list of IP addresses for whom we want to enable access.
 
 {% highlight text %}
 heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6
 {% endhighlight %}
 
-And finally, to exit maintenance mode.
+And finally, to exit maintenance mode, we unset the variables.
 
 {% highlight text %}
 heroku config:unset MAINTENANCE_MODE
 {% endhighlight %}
 
-Our module is also very easy to test.
+## Testing it
+
+Our feature is also very easy to test. We want to test a number of conditions:
+
+1. The app redirects to the maintenance page when the mode is enabled.
+2. The app does not redirect to the maintenance page when the mode is disabled, or if the current IP address is whitelisted.
+3. The app will redirect away from the maintenance page if the mode is disabled, or if the current IP address is whitelisted.
+4. The app will redirect back to the user's intended location once maintenance mode is disabled.
 
 {% highlight ruby %}
 require 'test_helper'
 
 class MaintenanceModeTest < ActionDispatch::IntegrationTest
-  setup do
-    ENV['MAINTENANCE_MODE'] = 'enabled'
-    ENV['MAINTAINER_IPS'] = '1.2.3.4'
-  end
-
   teardown do
     ENV.delete('MAINTENANCE_MODE')
     ENV.delete('MAINTAINER_IPS')
   end
 
-  test "doesn't show maintenance page when mode is disabled" do
+  test "does not redirect to maintenance page if mode is disabled" do
+    get login_path
+    assert_response :success
+  end
+
+  test "redirects to maintenance page if mode is enabled" do
+    ENV['MAINTENANCE_MODE'] = 'enabled'
+    get login_path
+    assert_redirected_to maintenance_path
+    follow_redirect!
+    assert_response :service_unavailable
+  end
+
+  test "does not redirect to maintenance page if mode is enabled and IP is whitelisted" do
+    ENV['MAINTENANCE_MODE'] = 'enabled'
+    ENV['MAINTAINER_IPS'] = '1.2.3.4'
+    get login_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
+    assert_response :success
+  end
+
+  test "redirects away from maintenance page when mode is disabled" do
+    get maintenance_path
+    assert_redirected_to root_path
+    follow_redirect!
+    assert_response :success
+  end
+
+  test "redirects away from maintenance page when mode is enabled and IP is whitelisted" do
+    ENV['MAINTENANCE_MODE'] = 'enabled'
+    ENV['MAINTAINER_IPS'] = '1.2.3.4'
+    get maintenance_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
+    assert_redirected_to root_path
+  end
+
+  test "redirects back to requested page when mode is disabled" do
+    ENV['MAINTENANCE_MODE'] = 'enabled'
+    get login_path
+    assert_redirected_to maintenance_path
     ENV['MAINTENANCE_MODE'] = nil
-    get root_path
-    assert_redirected_to maintenance_path
-  end
-
-  test "shows maintenance page when mode is enabled" do
-    get root_path
-    assert_redirected_to maintenance_path
-  end
-
-  test "doesn't show maintenance page when IP is whitelisted" do
-    get root_path, {}, { 'REMOTE_ADDR' => '1.2.3.4' }
-    assert_equal root_path, path
+    get maintenance_path
+    assert_redirected_to login_path
   end
 end
 {% endhighlight %}
 
 And there it is, a flexible and dynamic maintenance mode for your Rails application.
 
+## Caveats
+
+This feature is useful when you need to restrict access while your Rails app is running. If your Rails app is down, then this is useless since the request will make it to the app and an error page will be served. In that case, you might want to implement a maintenance page at the DNS or [web server][3] level, or use Heroku's built in solution.
+
 [1]: https://devcenter.heroku.com/articles/maintenance-mode
+[2]: http://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to
+[3]: https://viget.com/extend/server-maintenance-mode-for-rails-capistrano-and-apache2
+
+### Footnotes
+
+[^1]: There actually is [an HTTP specification](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.htmlg) for redirecting POST requests. But it appears that most frameworks don't handle this requirement very well, so we generally don't want to redirect back if the user was posting a form. For more on this topic, see [this article on Programmers](http://programmers.stackexchange.com/questions/99894/why-doesnt-http-have-post-redirect).
+[^2]: For example, when redirecting to the login page after a user requests a protected resource.
+

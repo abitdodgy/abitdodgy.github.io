@@ -85,7 +85,7 @@
 
   <div class="sidebar-item">
     <p>
-      &copy; 2015. All rights reserved.
+      &copy; 2016. All rights reserved.
     </p>
   </div>
 </div>
@@ -115,48 +115,66 @@
 
     <span class="post-date">30 Aug 2015</span>
 
-    <p>During the past month we’ve been busy introducing new features and making changes to our application, Nimbus Work Spaces. On a few occasions we needed to temporarily disable access to the application while we carried out migrations and tests. The first couple of times we disabled access using a <code>before_action</code> that redirected to a maintenance page unless the current user id was whitelisted. But it became clear that having a proper and scalable maintenance strategy is necessary. We have two requirements:</p>
+    <p>In an ideal world, you would update your application with zero downtime, and your users would be rewarded with snazzy new features without noticing how they got there. Of course, this is not always the case. There are times when downtime is inevitable. Having a proper and scalable maintenance strategy to deal with downtime is necessary, especially when making changes to the database. The following post describes one strategy that we’ve implemented in one of our apps.</p>
+
+<p>For this feature we have two requirements:</p>
 
 <ol>
-  <li>Allow access to some users while the application is in maintenance mode.</li>
+  <li>Allow access for some users while the application is undergoing maintenance.</li>
   <li>Serve a custom, internationalized template.</li>
 </ol>
 
-<p>There are several ways to implement a maintenance mode, but they typically work by bypassing requests to the application server and serving a static HTML page instead. Heroku has a built-in <a href="https://devcenter.heroku.com/articles/maintenance-mode">maintenance feature</a> that works in a similar way, for example. Unfortunately such solutions aren’t dynamic, and thus fail our requirements.</p>
+<p>There are several ways to implement a maintenance strategy, but they typically work by bypassing requests to the application server and serving a static HTML page. Heroku has a built-in <a href="https://devcenter.heroku.com/articles/maintenance-mode">maintenance feature</a> that works in a similar way. But it does not meet our requirements because it blocks access to the app entirely, and we have no control over the template served.</p>
 
-<p>To meet our requirements requests must hit the application so that it can determine how to handle the request, and what language to serve to the user. We implemented this feature by adding a controller action that rendered the maintenance template. We used Rails’ built in I18n for internationalization. Maintenance mode was then enabled and disabled by setting and unsetting an <code>ENV</code> variable respectively.</p>
+<p>To meet our requirements requests must hit the application so that it can determine how to handle each request, and what language to serve to the user. This can be easily implemented with the help of <code>ENV</code> variables, a controller action, and Rails’ built in I18n library.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">DowntimeController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  <span class="n">skip_before_action</span> <span class="ss">:check_maintenance_mode</span>
+<h2 id="remembering-the-users-location">Remembering the user’s location</h2>
 
-  <span class="k">def</span> <span class="nf">show</span>
-  <span class="k">end</span>
+<p>For better usability, we should have a way to remember the user’s intended location before redirecting him or her away. This way, when the app exits maintenance, we can redirect the user back to the page they originally wanted. This is sometimes referred to as <em>friendly forwarding</em>. Friendly forwarding is a feature we can reuse in other places, so it’s a good idea to implement it in a concern<sup id="fnref:2"><a href="#fn:2" class="footnote">1</a></sup> and mix it into <code>application_controller.rb</code>.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># app/controllers/concerns/friendly_forwarding.rb</span>
+<span class="k">def</span> <span class="nf">redirect_back_or</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{})</span>
+  <span class="n">location</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:forwarding_url</span><span class="p">)</span> <span class="o">||</span> <span class="n">default</span>
+  <span class="n">redirect_to</span> <span class="n">location</span><span class="p">,</span> <span class="n">options</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">store_location</span>
+  <span class="n">session</span><span class="o">[</span><span class="ss">:forwarding_url</span><span class="o">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">get?</span>
 <span class="k">end</span></code></pre></div>
 
-<p>The only code of interest here is the <code>skip_before_action</code> call; it ensures that we don’t check for maintenance mode when we are viewing the maintenance page. This stops the application from going into an infinite loop.</p>
+<p>When called, the <code>store_location</code> method will save the request URL in the session, but only if it’s a GET request <sup id="fnref:1"><a href="#fn:1" class="footnote">2</a></sup>. The <code>redirect_back_or</code> method takes a default route to use if no forwarding URL is present in the session, and an options hash. This way we can forward a flash message or any option that <a href="http://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to"><code>redirect_to</code></a> accepts.</p>
 
-<p>We also added a concern to handle the logic, and mixed it into <code>application_controller.rb</code>.</p>
+<h2 id="maintenance-mode">Maintenance mode</h2>
+
+<p>For the actual logic, we will also use a concern that we’ll mix into <code>application_controller.rb</code>.</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">MaintenanceMode</span>
   <span class="kp">extend</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Concern</span>
 
   <span class="n">included</span> <span class="k">do</span>
-    <span class="n">before_action</span> <span class="ss">:check_maintenance_mode</span>
+    <span class="n">before_action</span> <span class="ss">:handle_maintenance</span>
   <span class="k">end</span>
 
 <span class="kp">private</span>
 
-  <span class="k">def</span> <span class="nf">check_maintenance_mode</span>
-    <span class="k">if</span> <span class="n">maintenance_mode?</span>
-      <span class="n">redirect_to</span> <span class="n">maintenance_path</span> <span class="k">unless</span> <span class="n">permitted_ip?</span>
+  <span class="k">def</span> <span class="nf">handle_maintenance</span>
+    <span class="k">if</span> <span class="n">maintenance_mode_enabled?</span>
+      <span class="k">unless</span> <span class="n">remote_address_whitelisted?</span>
+        <span class="n">store_location</span>
+        <span class="n">redirect_to</span> <span class="n">maintenance_path</span>
+      <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="nf">maintenance_mode?</span>
-    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span>
+  <span class="k">def</span> <span class="nf">maintenance_mode_enabled?</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">].</span><span class="n">present?</span>
   <span class="k">end</span>
 
-  <span class="k">def</span> <span class="nf">permitted_ip?</span>
+  <span class="k">def</span> <span class="nf">maintenance_mode_disabled?</span>
+    <span class="o">!</span><span class="n">maintenance_mode_enabled?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">remote_address_whitelisted?</span>
     <span class="n">maintainer_ips</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">remote_ip</span><span class="p">)</span>
   <span class="k">end</span>
 
@@ -165,60 +183,152 @@
   <span class="k">end</span>
 <span class="k">end</span></code></pre></div>
 
+<p>The <code>MaintenanceMode</code> concern adds a <code>before_action</code> that redirects to the maintenance page if the mode is enabled unless the current IP address is whitelisted. Both maintenance mode and whitelisted IP addresses are stored in <em>ENV</em> variables.</p>
+
+<p>Now that our concerns are ready we should mix them into the application controller.</p>
+
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">ApplicationController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span>
+  <span class="kp">include</span> <span class="no">FriendlyForwarding</span>
   <span class="kp">include</span> <span class="no">MaintenanceMode</span>
 <span class="k">end</span></code></pre></div>
 
-<p>This module adds a <code>before_action</code> that checks if the application is in maintenance mode, and does any work required.</p>
+<p>All that remains is to add a controller that renders the maintenance page, a route, and some tests.</p>
 
-<p>To enter maintenance mode we set an <code>ENV</code> variable on Heroku.</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># config/routes.rb</span>
+<span class="n">get</span> <span class="ss">:maintenance</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="s1">&#39;maintenance#show&#39;</span></code></pre></div>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MaintenanceController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">skip_before_action</span> <span class="ss">:handle_maintenance</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">status</span><span class="p">:</span> <span class="mi">503</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>The <code>skip_before_action</code> ensures that we don’t check for maintenance mode when we are viewing the maintenance page itself. This stops the application from going into an infinite loop. We also have to explicitly use <code>render</code> so that we can set the HTTP status code to to <em>503</em>, which stands for <code>:service_unavailable</code>. The default status code in Rails is <em>200</em>, or <code>:success</code>.</p>
+
+<p>We could stop now, but for better usability we should redirect away from the maintenance page and back to the app if the mode is disabled. This is a small change, and it’s important–especially if your maintenance page is minimalistic, and has no navigation–because some users will refresh the page hoping that the maintenance page will go away by itself. If you don’t redirect the user back, he or she could be stuck until frustrated enough to type the app’s URL in the address bar. Plus, we made the effort to add friendly forwarding, and unless we make this change we will not have a chance to use it.</p>
+
+<p>Inside the show action we want to redirect back to the application under two conditions:</p>
+
+<ol>
+  <li>If maintenance mode is disabled.</li>
+  <li>If the IP address is whitelisted.</li>
+</ol>
+
+<p>We can use a before filter to add this extra functionality.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MaintenanceController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="c1"># ...</span>
+  <span class="n">before_action</span> <span class="ss">:redirect_if_maintenance_disabled</span>
+  <span class="c1"># ...</span>
+
+<span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">redirect_if_maintenance_disabled</span>
+    <span class="k">if</span> <span class="n">maintenance_mode_disabled?</span> <span class="o">||</span> <span class="n">remote_address_whitelisted?</span>
+      <span class="n">redirect_back_or</span> <span class="n">root_path</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<h2 id="using-it">Using it</h2>
+
+<p>To enter the application into maintenance mode, we set an <code>ENV</code> variable on Heroku.</p>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">heroku config:set MAINTENANCE_MODE=enabled</code></pre></div>
 
-<p>It doesn’t really matter what the value of <code>MAINTENANCE_MODE</code> is (or its name, for that matter), so <em>enabled</em> serves for clarity. The logic checks for the presence of the variable, not its value.</p>
+<p>From the app’s perspective, it doesn’t really matter what the value of <code>MAINTENANCE_MODE</code> is (or its name, for that matter), so <em>enabled</em> serves for clarity. Our logic checks for the presence of the variable, not its value.</p>
 
-<p>To allow access to an IP address we set another <code>ENV</code> variable. Its value should be a comma-delimited list of IP addresses that we want to enable access for.</p>
+<p>To allow access to an IP address, we set another <code>ENV</code> variable. Its value should be a comma-delimited list of IP addresses for whom we want to enable access.</p>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">heroku config:set MAINTAINER_IPS=1.2.3.4,9.8.7.6</code></pre></div>
 
-<p>And finally, to exit maintenance mode.</p>
+<p>And finally, to exit maintenance mode, we unset the variables.</p>
 
 <div class="highlight"><pre><code class="language-text" data-lang="text">heroku config:unset MAINTENANCE_MODE</code></pre></div>
 
-<p>Our module is also very easy to test.</p>
+<h2 id="testing-it">Testing it</h2>
+
+<p>Our feature is also very easy to test. We want to test a number of conditions:</p>
+
+<ol>
+  <li>The app redirects to the maintenance page when the mode is enabled.</li>
+  <li>The app does not redirect to the maintenance page when the mode is disabled, or if the current IP address is whitelisted.</li>
+  <li>The app will redirect away from the maintenance page if the mode is disabled, or if the current IP address is whitelisted.</li>
+  <li>The app will redirect back to the user’s intended location once maintenance mode is disabled.</li>
+</ol>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
 
 <span class="k">class</span> <span class="nc">MaintenanceModeTest</span> <span class="o">&lt;</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">IntegrationTest</span>
-  <span class="n">setup</span> <span class="k">do</span>
-    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;enabled&#39;</span>
-    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTAINER_IPS&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;1.2.3.4&#39;</span>
-  <span class="k">end</span>
-
   <span class="n">teardown</span> <span class="k">do</span>
     <span class="no">ENV</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="p">)</span>
     <span class="no">ENV</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;MAINTAINER_IPS&#39;</span><span class="p">)</span>
   <span class="k">end</span>
 
-  <span class="nb">test</span> <span class="s2">&quot;doesn&#39;t show maintenance page when mode is disabled&quot;</span> <span class="k">do</span>
+  <span class="nb">test</span> <span class="s2">&quot;does not redirect to maintenance page if mode is disabled&quot;</span> <span class="k">do</span>
+    <span class="n">get</span> <span class="n">login_path</span>
+    <span class="n">assert_response</span> <span class="ss">:success</span>
+  <span class="k">end</span>
+
+  <span class="nb">test</span> <span class="s2">&quot;redirects to maintenance page if mode is enabled&quot;</span> <span class="k">do</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;enabled&#39;</span>
+    <span class="n">get</span> <span class="n">login_path</span>
+    <span class="n">assert_redirected_to</span> <span class="n">maintenance_path</span>
+    <span class="n">follow_redirect!</span>
+    <span class="n">assert_response</span> <span class="ss">:service_unavailable</span>
+  <span class="k">end</span>
+
+  <span class="nb">test</span> <span class="s2">&quot;does not redirect to maintenance page if mode is enabled and IP is whitelisted&quot;</span> <span class="k">do</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;enabled&#39;</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTAINER_IPS&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;1.2.3.4&#39;</span>
+    <span class="n">get</span> <span class="n">login_path</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{</span> <span class="s1">&#39;REMOTE_ADDR&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;1.2.3.4&#39;</span> <span class="p">}</span>
+    <span class="n">assert_response</span> <span class="ss">:success</span>
+  <span class="k">end</span>
+
+  <span class="nb">test</span> <span class="s2">&quot;redirects away from maintenance page when mode is disabled&quot;</span> <span class="k">do</span>
+    <span class="n">get</span> <span class="n">maintenance_path</span>
+    <span class="n">assert_redirected_to</span> <span class="n">root_path</span>
+    <span class="n">follow_redirect!</span>
+    <span class="n">assert_response</span> <span class="ss">:success</span>
+  <span class="k">end</span>
+
+  <span class="nb">test</span> <span class="s2">&quot;redirects away from maintenance page when mode is enabled and IP is whitelisted&quot;</span> <span class="k">do</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;enabled&#39;</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTAINER_IPS&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;1.2.3.4&#39;</span>
+    <span class="n">get</span> <span class="n">maintenance_path</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{</span> <span class="s1">&#39;REMOTE_ADDR&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;1.2.3.4&#39;</span> <span class="p">}</span>
+    <span class="n">assert_redirected_to</span> <span class="n">root_path</span>
+  <span class="k">end</span>
+
+  <span class="nb">test</span> <span class="s2">&quot;redirects back to requested page when mode is disabled&quot;</span> <span class="k">do</span>
+    <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;enabled&#39;</span>
+    <span class="n">get</span> <span class="n">login_path</span>
+    <span class="n">assert_redirected_to</span> <span class="n">maintenance_path</span>
     <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MAINTENANCE_MODE&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="kp">nil</span>
-    <span class="n">get</span> <span class="n">root_path</span>
-    <span class="n">assert_redirected_to</span> <span class="n">maintenance_path</span>
-  <span class="k">end</span>
-
-  <span class="nb">test</span> <span class="s2">&quot;shows maintenance page when mode is enabled&quot;</span> <span class="k">do</span>
-    <span class="n">get</span> <span class="n">root_path</span>
-    <span class="n">assert_redirected_to</span> <span class="n">maintenance_path</span>
-  <span class="k">end</span>
-
-  <span class="nb">test</span> <span class="s2">&quot;doesn&#39;t show maintenance page when IP is whitelisted&quot;</span> <span class="k">do</span>
-    <span class="n">get</span> <span class="n">root_path</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{</span> <span class="s1">&#39;REMOTE_ADDR&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;1.2.3.4&#39;</span> <span class="p">}</span>
-    <span class="n">assert_equal</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">path</span>
+    <span class="n">get</span> <span class="n">maintenance_path</span>
+    <span class="n">assert_redirected_to</span> <span class="n">login_path</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre></div>
 
 <p>And there it is, a flexible and dynamic maintenance mode for your Rails application.</p>
 
+<h2 id="caveats">Caveats</h2>
+
+<p>This feature is useful when you need to restrict access while your Rails app is running. If your Rails app is down, then this is useless since the request will make it to the app and an error page will be served. In that case, you might want to implement a maintenance page at the DNS or <a href="https://viget.com/extend/server-maintenance-mode-for-rails-capistrano-and-apache2">web server</a> level, or use Heroku’s built in solution.</p>
+
+<h3 id="footnotes">Footnotes</h3>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:2">
+      <p>For example, when redirecting to the login page after a user requests a protected resource. <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:1">
+      <p>There actually is <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.htmlg">an HTTP specification</a> for redirecting POST requests. But it appears that most frameworks don’t handle this requirement very well, so we generally don’t want to redirect back if the user was posting a form. For more on this topic, see <a href="http://programmers.stackexchange.com/questions/99894/why-doesnt-http-have-post-redirect">this article on Programmers</a>. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
   </div>
   

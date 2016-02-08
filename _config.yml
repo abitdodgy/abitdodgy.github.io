@@ -5,18 +5,18 @@ permalink:           pretty
 relative_permalinks: true
 
 # Setup
-title:               Mohamad El-Husseini
+title:               'Mohamad El-Husseini'
 tagline:             'Part-time hero, full-time superstar.'
-description:         "Mohamad El-Husseini, sharing his brilliant thoughts."
-url:                 http://mohamad.im
+description:         'Mohamad El-Husseini, sharing his brilliant thoughts.'
+url:                 'http://mohamad.im'
 baseurl:             ''
 paginate:            5
 
 # About/contact
 author:
-  name:              Mohamad El-Husseini
-  url:               https://twitter.com/abitdodgy
-  email:             husseini.mel@gmail.com
+  name:              'Mohamad El-Husseini'
+  url:               'https://twitter.com/abitdodgy'
+  email:             'husseini.mel@gmail.com'
 
 # Custom vars
 version:             1.0.0

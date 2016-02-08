@@ -1,0 +1,34 @@
+.home {
+  background-color: #26282d;
+  color: #93979e;
+  padding: 2rem;
+  text-align: center;
+}
+
+.home h1,
+.home h2,
+.home h3 {
+  color: #fff;
+  font-weight: 600;
+}
+
+.home h1 {
+  border: .2rem solid #32343c;
+  border-radius: .1rem;
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: .5rem 1.5rem;
+}
+
+.home hr {
+  border-bottom: 0;
+  border-top-color: #32343c;
+  margin: 3rem auto;
+  max-width: 6rem;
+}
+
+.home .lead {
+  font-size: 1.25rem;
+  font-weight: 300;
+  margin-bottom: 0;
+}
