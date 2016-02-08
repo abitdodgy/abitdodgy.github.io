@@ -1,0 +1,117 @@
+---
+layout: post
+title: "Project Euler Problem 6: Sum Square Difference"
+---
+
+In this post, I will demonstrate how to solve problem six in Project Euler in a programming language of your choice. Yes, that's correct, in any language!
+
+### Spoiler alert
+
+If you have an academic interest in Project Euler, and you have not solved problem six, I suggest you do so before reading this post lest you deprive yourself of the opportunity to learn.
+
+## The problem
+
+The problem asks you to find the difference between the sum of the squares of the first 100 natural numbers and the square of their sum.
+
+> Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
+
+This is one of the easiest Project Euler problems. Up to $$n = 100$$ it is trivial, but we can use some [math][2] to solve it up to massive numbers, like [a thousand quinquagintaquadringentillion][4] (that's $$10^{2703}$$, or 1 followed by 2703 zeros), that would otherwise take decades to solve even for a computer. But more on that later.
+
+## Linear solution
+
+Sometimes the most obvious solution isn't necessarily the best one. Let's consider the problem in linear terms. We can express the solution like this.
+
+$$
+(1 + 2 + 3 + \cdots + 100)^2 + (1^2 + 2^2 + 3^2 + \cdots + 100^2)
+$$
+
+We can easily solve this in Ruby. We create an array of integers using the given range, reduce and square it. This is the square of the sum. We create another array of squared integers and reduce it. This is the sum of squares. Then we take the difference.
+
+{% highlight ruby %}
+(1..100).reduce(:+)**2 - (1..100).map { |n| n**2 }.reduce(:+)
+{% endhighlight %}
+
+For small numbers, this works well. But what if, instead of 100, you had to solve for a thousand quinquagintaquadringentillion? No one wants to create arrays with that many elements or loops with that many iterations. We need a better way.
+
+## A better solution
+
+If you paid attention during elementary math&mdash;I didn't&mdash;you should know that there is a better way to express the equation. Theoretically, we can use mathematical induction to solve this problem up to any number.
+
+The square of the sum up to $$n$$ can be expressed as:
+
+$$
+(1 + 2 + 3 + \cdots + n)^2 = \left(\frac{n(n + 1)}{2}\right)^2
+$$
+
+And the sum of squares up to $$n$$ like so.
+
+$$
+1^2 + 2^2 + 3^2 + \cdots + n^2 = \frac{n(n + 1)(2n + 1)}{6}
+$$
+
+So the solution up to $$n$$ looks like this.
+
+$$
+\left(\frac{n(n + 1)}{2}\right)^2 - \frac{n(n + 1)(2n + 1)}{6}
+$$
+
+Now the solution is simple mathematics, and we can solve this problem up to nonsensical numbers in microseconds. Here's what it looks like in Ruby; it's not terribly interesting.
+
+{% highlight ruby %}
+(n * (n + 1) / 2)**2 - (n * (n + 1)) * ((n * 2) + 1) / 6
+{% endhighlight %}
+
+To make it a bit more interesting I created [benchmarks][5] to illustrate the efficiency of four different techniques: MapReduce, enum, while loop, and induction. The earlier three were tested against $$n = 10^6$$, and the latter against a thousand quinquagintaquadringentillion, or $$10^{2703}$$.
+
+{% highlight text %}
+Benchmarking with 10000000 iterations
+       user     system      total        real
+MapReduce  2.890000   0.030000   2.920000 (  2.928501)
+Enum       1.610000   0.010000   1.620000 (  1.611081)
+Loop       1.200000   0.000000   1.200000 (  1.201676)
+Benchmarking with 10^2703 iterations
+Induction  0.000000   0.000000   0.000000 (  0.000010)
+{% endhighlight %}
+
+Map and reduce, enumerator, and the while loop took 2.9, 1.6, and 1.2 seconds respectively. Using our equation we solved a ridiculously larger number in 10 microseconds, which is 10 millionth of a second. I ran these on my first gen MacBook Pro Retina.
+
+## Linear solutions in Swift and JavaScript
+
+Predictably, solving this linearly in JavaScript is not very efficient for large numbers either. On my computer, using map and reduce fills up the stack and throws an exception at $$n \sim 130000$$, while using a loop solves up to $$n = 10^9$$ in circa 3.5 seconds.
+
+{% highlight javascript %}
+function diff(n) {
+  var sumOfSquares = squareOfSum = 0;
+
+  while(n) {
+    sumOfSquares += n * n, squareOfSum += n, n--;
+  }
+
+  squareOfSum *= squareOfSum;
+  return squareOfSum - sumOfSquares;
+}
+{% endhighlight %}
+
+The same principle applies in Swift.
+
+{% highlight swift %}
+func diff(n: Int) -> Int {
+    let array = [Int](1...n)
+
+    let sumOfSquares = array.map({ $0 * $0 }).reduce(0, +)
+    let sum = array.reduce(0, +)
+    let squareOfSum = sum * sum
+
+    return squareOfSum - sumOfSquares
+}
+{% endhighlight %}
+
+You can find all of the [sample code][5] including performance benchmarks using the techniques discussed on Github.
+
+[1]: http://www.inkk.co/entries/80-project-euler-large-sum
+[2]: http://en.wikipedia.org/wiki/Mathematical_induction
+[3]: http://en.wikipedia.org/wiki/MapReduce
+[4]: http://en.wikipedia.org/wiki/Names_of_large_numbers
+[5]: https://gist.github.com/abitdodgy/b88a8018527107eb25c9
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
