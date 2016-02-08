@@ -108,7 +108,110 @@
   
   <div class="post">
     <h1 class="post-title">
-      <a href="//2015/08/30/maintenance-mode-for-rails/">
+      <a href="/2015/09/06/project-euler-problem-6/">
+        Project Euler Problem 6: Sum Square Difference
+      </a>
+    </h1>
+
+    <span class="post-date">06 Sep 2015</span>
+
+    <p>In this post, I will demonstrate how to solve problem six in Project Euler in a programming language of your choice. Yes, that’s correct, in any language!</p>
+
+<h3 id="spoiler-alert">Spoiler alert</h3>
+
+<p>If you have an academic interest in Project Euler, and you have not solved problem six, I suggest you do so before reading this post lest you deprive yourself of the opportunity to learn.</p>
+
+<h2 id="the-problem">The problem</h2>
+
+<p>The problem asks you to find the difference between the sum of the squares of the first 100 natural numbers and the square of their sum.</p>
+
+<blockquote>
+  <p>Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.</p>
+</blockquote>
+
+<p>This is one of the easiest Project Euler problems. Up to <script type="math/tex">n = 100</script> it is trivial, but we can use some <a href="http://en.wikipedia.org/wiki/Mathematical_induction">math</a> to solve it up to massive numbers, like <a href="http://en.wikipedia.org/wiki/Names_of_large_numbers">a thousand quinquagintaquadringentillion</a> (that’s <script type="math/tex">10^{2703}</script>, or 1 followed by 2703 zeros), that would otherwise take decades to solve even for a computer. But more on that later.</p>
+
+<h2 id="linear-solution">Linear solution</h2>
+
+<p>Sometimes the most obvious solution isn’t necessarily the best one. Let’s consider the problem in linear terms. We can express the solution like this.</p>
+
+<script type="math/tex; mode=display">(1 + 2 + 3 + \cdots + 100)^2 + (1^2 + 2^2 + 3^2 + \cdots + 100^2)</script>
+
+<p>We can easily solve this in Ruby. We create an array of integers using the given range, reduce and square it. This is the square of the sum. We create another array of squared integers and reduce it. This is the sum of squares. Then we take the difference.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="ss">:+</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span> <span class="n">n</span><span class="o">**</span><span class="mi">2</span> <span class="p">}</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="ss">:+</span><span class="p">)</span></code></pre></div>
+
+<p>For small numbers, this works well. But what if, instead of 100, you had to solve for a thousand quinquagintaquadringentillion? No one wants to create arrays with that many elements or loops with that many iterations. We need a better way.</p>
+
+<h2 id="a-better-solution">A better solution</h2>
+
+<p>If you paid attention during elementary math—I didn’t—you should know that there is a better way to express the equation. Theoretically, we can use mathematical induction to solve this problem up to any number.</p>
+
+<p>The square of the sum up to <script type="math/tex">n</script> can be expressed as:</p>
+
+<script type="math/tex; mode=display">(1 + 2 + 3 + \cdots + n)^2 = \left(\frac{n(n + 1)}{2}\right)^2</script>
+
+<p>And the sum of squares up to <script type="math/tex">n</script> like so.</p>
+
+<script type="math/tex; mode=display">1^2 + 2^2 + 3^2 + \cdots + n^2 = \frac{n(n + 1)(2n + 1)}{6}</script>
+
+<p>So the solution up to <script type="math/tex">n</script> looks like this.</p>
+
+<script type="math/tex; mode=display">\left(\frac{n(n + 1)}{2}\right)^2 - \frac{n(n + 1)(2n + 1)}{6}</script>
+
+<p>Now the solution is simple mathematics, and we can solve this problem up to nonsensical numbers in microseconds. Here’s what it looks like in Ruby; it’s not terribly interesting.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">6</span></code></pre></div>
+
+<p>To make it a bit more interesting I created <a href="https://gist.github.com/abitdodgy/b88a8018527107eb25c9">benchmarks</a> to illustrate the efficiency of four different techniques: MapReduce, enum, while loop, and induction. The earlier three were tested against <script type="math/tex">n = 10^6</script>, and the latter against a thousand quinquagintaquadringentillion, or <script type="math/tex">10^{2703}</script>.</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text">Benchmarking with 10000000 iterations
+       user     system      total        real
+MapReduce  2.890000   0.030000   2.920000 (  2.928501)
+Enum       1.610000   0.010000   1.620000 (  1.611081)
+Loop       1.200000   0.000000   1.200000 (  1.201676)
+Benchmarking with 10^2703 iterations
+Induction  0.000000   0.000000   0.000000 (  0.000010)</code></pre></div>
+
+<p>Map and reduce, enumerator, and the while loop took 2.9, 1.6, and 1.2 seconds respectively. Using our equation we solved a ridiculously larger number in 10 microseconds, which is 10 millionth of a second. I ran these on my first gen MacBook Pro Retina.</p>
+
+<h2 id="linear-solutions-in-swift-and-javascript">Linear solutions in Swift and JavaScript</h2>
+
+<p>Predictably, solving this linearly in JavaScript is not very efficient for large numbers either. On my computer, using map and reduce fills up the stack and throws an exception at <script type="math/tex">n \sim 130000</script>, while using a loop solves up to <script type="math/tex">n = 10^9</script> in circa 3.5 seconds.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">diff</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">sumOfSquares</span> <span class="o">=</span> <span class="nx">squareOfSum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">while</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">sumOfSquares</span> <span class="o">+=</span> <span class="nx">n</span> <span class="o">*</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">squareOfSum</span> <span class="o">+=</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">n</span><span class="o">--</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">squareOfSum</span> <span class="o">*=</span> <span class="nx">squareOfSum</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">squareOfSum</span> <span class="o">-</span> <span class="nx">sumOfSquares</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>The same principle applies in Swift.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">func</span> <span class="n">diff</span><span class="p">(</span><span class="nl">n</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Int</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">Int</span><span class="p">](</span><span class="mf">1.</span><span class="p">..</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">let</span> <span class="n">sumOfSquares</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="n">map</span><span class="p">({</span> <span class="err">$</span><span class="mi">0</span> <span class="o">*</span> <span class="err">$</span><span class="mi">0</span> <span class="p">}).</span><span class="n">reduce</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">+</span><span class="p">)</span>
+    <span class="k">let</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">+</span><span class="p">)</span>
+    <span class="k">let</span> <span class="n">squareOfSum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">*</span> <span class="n">sum</span>
+
+    <span class="k">return</span> <span class="n">squareOfSum</span> <span class="o">-</span> <span class="n">sumOfSquares</span>
+<span class="p">}</span></code></pre></div>
+
+<p>You can find all of the <a href="https://gist.github.com/abitdodgy/b88a8018527107eb25c9">sample code</a> including performance benchmarks using the techniques discussed on Github.</p>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2015/08/30/maintenance-mode-for-rails/">
         Adding a dynamic maintenance mode to a Rails app
       </a>
     </h1>
