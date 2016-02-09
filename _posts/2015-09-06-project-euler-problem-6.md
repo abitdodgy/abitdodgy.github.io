@@ -61,7 +61,29 @@ Now the solution is simple mathematics, and we can solve this problem up to nons
 (n * (n + 1) / 2)**2 - (n * (n + 1)) * ((n * 2) + 1) / 6
 {% endhighlight %}
 
-To make it a bit more interesting I created [benchmarks][5] to illustrate the efficiency of four different techniques: MapReduce, enum, while loop, and induction. The earlier three were tested against $$n = 10^6$$, and the latter against a thousand quinquagintaquadringentillion, or $$10^{2703}$$.
+To make it a bit more interesting I created [benchmarks][5] to illustrate the efficiency of four different techniques: Using map and reduce, enumerators, while loop, and induction. The earlier three were tested against $$n = 10^6$$, and the latter against a thousand quinquagintaquadringentillion, or $$10^{2703}$$.
+
+{% highlight ruby %}
+def map_reduce(n)
+  (1..n).reduce(:+)**2 - (1..n).map { |n| n**2 }.reduce(:+)
+end
+
+def enum(n)
+  sumOfSquares = squareOfSum = 0
+  n.downto 1 do |i|
+    squareOfSum += i; sumOfSquares += i * i
+  end
+  (squareOfSum *= squareOfSum) - sumOfSquares
+end
+
+def while_loop(n)
+  sumOfSquares = squareOfSum = 0
+  while n > 0
+    squareOfSum += n; sumOfSquares += n * n; n -= 1
+  end
+  (squareOfSum *= squareOfSum) - sumOfSquares
+end
+{% endhighlight %}
 
 {% highlight text %}
 Benchmarking with 10000000 iterations
@@ -69,6 +91,7 @@ Benchmarking with 10000000 iterations
 MapReduce  2.890000   0.030000   2.920000 (  2.928501)
 Enum       1.610000   0.010000   1.620000 (  1.611081)
 Loop       1.200000   0.000000   1.200000 (  1.201676)
+
 Benchmarking with 10^2703 iterations
 Induction  0.000000   0.000000   0.000000 (  0.000010)
 {% endhighlight %}
