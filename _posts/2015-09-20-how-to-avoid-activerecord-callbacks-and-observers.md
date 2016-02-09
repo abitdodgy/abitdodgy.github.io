@@ -167,6 +167,7 @@ private
     # A database uniqueness constraint will prevent a clash
     self.token = SecureRandom.urlsafe_base64
   end
+ end
 {% endhighlight %}
 
 But even then I look for ways to avoid them. For example, but it's better to use [a setter method][2] to downcase the email.
