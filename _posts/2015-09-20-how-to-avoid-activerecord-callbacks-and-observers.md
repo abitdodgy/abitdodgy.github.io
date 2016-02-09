@@ -1,11 +1,13 @@
 ---
 layout: post
-title: How to avoid using ActiveRecord callbacks and Observers
+title: How to avoid using ActiveRecord Callbacks and Observers
 ---
 
 A plethora of literature exists in the Rails world to dissuade you from using ActiveRecord callbacks. Callbacks are not intrinsically bad, but they give you a lot of rope to hang yourself with, and consequently they are an often abused feature of Rails.
 
-Callbacks are attractive because they make certain tasks look and feel deceptively easy. But this is usually because the developer has not thoroughly thought through the consequences or the use cases, or because the application is still in its infancy when many of the pieces are yet to fallen into place.
+Callbacks are attractive because they make certain tasks look and feel deceptively easy. But this is usually because the developer has not thoroughly thought through the consequences or the use cases, or because the application is still in its infancy when many of the pieces are yet to fall into place.
+
+
 
 ## Callbacks obfuscate the intention of your code
 
