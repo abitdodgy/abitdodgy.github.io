@@ -69,19 +69,19 @@ def map_reduce(n)
 end
 
 def enum(n)
-  sumOfSquares = squareOfSum = 0
+  sum_of_squares = square_of_sum = 0
   n.downto 1 do |i|
-    squareOfSum += i; sumOfSquares += i * i
+    square_of_sum += i; sum_of_squares += i * i
   end
-  (squareOfSum *= squareOfSum) - sumOfSquares
+  (square_of_sum *= square_of_sum) - sum_of_squares
 end
 
 def while_loop(n)
-  sumOfSquares = squareOfSum = 0
+  sum_of_squares = square_of_sum = 0
   while n > 0
-    squareOfSum += n; sumOfSquares += n * n; n -= 1
+    square_of_sum += n; sum_of_squares += n * n; n -= 1
   end
-  (squareOfSum *= squareOfSum) - sumOfSquares
+  (square_of_sum *= square_of_sum) - sum_of_squares
 end
 {% endhighlight %}
 
