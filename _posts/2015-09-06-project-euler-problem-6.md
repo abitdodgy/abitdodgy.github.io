@@ -11,39 +11,39 @@ If you have an academic interest in Project Euler, and you have not solved probl
 
 ## The problem
 
-The problem asks you to find the difference between the sum of the squares of the first 100 natural numbers and the square of their sum.
+This is one of the easiest Project Euler problems.
 
 > Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
 
-This is one of the easiest Project Euler problems. Up to $$n = 100$$ it is trivial, but we can use some [math][2] to solve it up to massive numbers, like [a thousand quinquagintaquadringentillion][4] (that's $$10^{2703}$$, or 1 followed by 2703 zeros), that would otherwise take decades to solve even for a computer. But more on that later.
+Up to $$n = 100$$ it is trivial, but we can use [math][2] to solve it up to massive numbers, like [a thousand quinquagintaquadringentillion][4] (that's $$10^{2703}$$, or 1 followed by 2703 zeros), that could otherwise take decades to solve even for a computer.
 
 ## Linear solution
 
-Sometimes the most obvious solution isn't necessarily the best one. Let's consider the problem in linear terms. We can express the solution like this.
+Sometimes the most obvious solution isn't necessarily the best one. Let's consider the problem in linear terms.
 
 $$
 (1 + 2 + 3 + \cdots + 100)^2 + (1^2 + 2^2 + 3^2 + \cdots + 100^2)
 $$
 
-We can easily solve this in Ruby. We create an array of integers using the given range, reduce and square it. This is the square of the sum. We create another array of squared integers and reduce it. This is the sum of squares. Then we take the difference.
+We can easily solve this in Ruby.
 
 {% highlight ruby %}
 (1..100).reduce(:+)**2 - (1..100).map { |n| n**2 }.reduce(:+)
 {% endhighlight %}
 
-For small numbers, this works well. But what if, instead of 100, you had to solve for a thousand quinquagintaquadringentillion? No one wants to create arrays with that many elements or loops with that many iterations. We need a better way.
+For small numbers, this works well. But what if, instead of 100, you had to solve for a thousand quinquagintaquadringentillion? No one wants to create arrays with that many elements or loops with that many iterations.
 
 ## A better solution
 
 If you paid attention during elementary math&mdash;I didn't&mdash;you should know that there is a better way to express the equation. Theoretically, we can use mathematical induction to solve this problem up to any number.
 
-The square of the sum up to $$n$$ can be expressed as:
+This is the square of the sum up to $$n$$.
 
 $$
 (1 + 2 + 3 + \cdots + n)^2 = \left(\frac{n(n + 1)}{2}\right)^2
 $$
 
-And the sum of squares up to $$n$$ like so.
+And the sum of squares up to $$n$$.
 
 $$
 1^2 + 2^2 + 3^2 + \cdots + n^2 = \frac{n(n + 1)(2n + 1)}{6}

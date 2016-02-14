@@ -11,7 +11,7 @@ Callbacks are attractive because they make certain tasks look and feel deceptive
 
 ## Callbacks obfuscate the intention of your code
 
-Good code is explicit code. Using the example below, if you call `@user.save` you should mean to save the user instance only, and not save it and send an email afterwards. The code should express its intent clearly. Sending out the email should not be a side effect of saving the user.
+Good code is explicit code. Using the example below, if you call `@user.save` you should mean to save the user instance only, and not save it and send an email afterwards. The code should express its intent clearly. Sending out the email should not be a side effect of creating the user.
 
 {% highlight ruby %}
 class User < ActiveRecord::Base
