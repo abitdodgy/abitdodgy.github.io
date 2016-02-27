@@ -19,3 +19,10 @@ author:
 
 # Custom vars
 version:             1.0.0
+
+gems:
+  - jekyll-paginate
+
+paginate: 2
+paginate_path: "/page:num/"
+safe: false

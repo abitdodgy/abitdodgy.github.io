@@ -25,7 +25,7 @@ To make hummus, you need the following ingredients.
 
 **It's important that the chickpeas are dry, and not precooked, canned, or soaked in liquid**. Precooked or canned chickpeas usually impart a strange and undesirable flavour.
 
-The following ingredients are optional. But your hummus can't be "world famous" without proper garnishing. For me, the following ingredients are not only important for the aesthetics of your hummus, but also for its flavor.
+The following ingredients are optional. But your hummus can't be "world famous" without proper garnishing. For me, the following ingredients are not only important for the aesthetics of my hummus, but also for its flavor.
 
 1. A few shoots of parsley, finely chopped.
 2. One-half of a tomatoe, finely chopped.
@@ -46,9 +46,9 @@ Once the chickpeas are cooked, drain them in a colander, but not before you save
 
 Put the chickpeas into the blender with the garlic, the lemon juice, and the salt. Add the broth you saved from cooking the chickpeas and another 50 mililitres of fresh water. Blend the mixture until it becomes creamy. Add the tahini. Blend again for another minute. You might have to stir the ingredients if there's not enough liquid to blend the mixture properly.
 
-Now take a moment to consider the consistency of your hummus. Reward yourself with a nibble. If changes are required, now is the time to make them.
+Now take a moment to consider the consistency of your hummus. Reward yourself with a nibble. If changes are necessary, now is a good time to make them.
 
-At this stage, your hummus might be perfect, too thick, or too runny. If it's too thick, you must add water incrementally and continue to blend the mixture; if it's too runny, you add more tahini; if its flavour is bland, perhaps dash of lemon juice or a scrap of garlic will fix it. Maybe it's the salt. Your hummus is your canvas, so express yourself.
+At this stage, your hummus might be perfect, too thick, or too runny. If it's too thick, you must add water incrementally and continue to blend the mixture; if it's too runny, you add more tahini; if its flavour is bland, perhaps dash of lemon juice or a scrap of garlic will fix it. Maybe it's the salt.
 
 ## The Presentation
 
@@ -62,7 +62,7 @@ Scoop the hummus out of the blender and onto a shallow plate and spread it aroun
 
 Add a pinch of parsley on opposite sides of the peak. Add some chopped tomatoes to the other two sides. Add a sprinkle of chili powder between each pinch of parsley and the adjacent tomato. Pour a healthy serving of olive oil all around. Finally, the crowning moment should have you add a shoot of mint to the peak in the center of the plate.
 
-Serve with some pita bread and a big smile.
+Of course, you can present your hummus in anyway that pleases you. Your hummus is your canvas, so express yourself All that's left is to serve it with some pita bread and a big smile.
 
 [1]: https://www.google.com.br/search?q=fatteh&gws_rd=cr,ssl&ei=gYa7VtLRGsiFwQTZr4ugBA
 [2]: https://en.wikipedia.org/wiki/Tahini

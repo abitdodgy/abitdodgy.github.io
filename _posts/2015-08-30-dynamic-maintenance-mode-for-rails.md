@@ -1,22 +1,24 @@
 ---
 layout: post
-title: Adding a dynamic maintenance mode to a Rails app
+title: Adding a dynamic maintenance mode you Rails app
 ---
 
-In an ideal world, you would update your application with zero downtime, and your users would be rewarded with snazzy new features without noticing how they got there. Of course, this is not always the case. There are times when downtime is inevitable. Having a proper and scalable maintenance strategy to deal with downtime is necessary, especially when making changes to the database. The following post describes one strategy that we've implemented in one of our apps.
+In an ideal world, you would update your application with zero downtime, and your users would be rewarded with snazzy new features without noticing how they got there. Of course, this is not always the case. There are times when downtime is inevitable. Having a proper and scalable maintenance strategy to deal with downtime is necessary, especially when making changes to the database. The following post describes a strategy we recently used.
 
-For this feature we have two requirements:
+We had two requirements:
 
-1. Allow access for some users while the application is undergoing maintenance.
+1. Allow *some* users to access the application while it's undergoing maintenance.
 2. Serve a custom, internationalized template.
 
-There are several ways to implement a maintenance strategy, but they typically work by bypassing requests to the application server and serving a static HTML page. Heroku has a built-in [maintenance feature][1] that works in a similar way. But it does not meet our requirements because it blocks access to the app entirely, and we have no control over the template served.
+There are several ways to implement a maintenance strategy, but they typically work by bypassing requests to the application server and serving a static HTML page. Heroku has a built-in [maintenance feature][1] that works in a similar way. But it meets none of our requirements because it bypasses the app entirely.
 
-To meet our requirements requests must hit the application so that it can determine how to handle each request, and what language to serve to the user. This can be easily implemented with the help of `ENV` variables, a controller action, and Rails' built in I18n library.
+In our case, requests must hit the application so that it can determine whether to allow access, and what language to serve to the user.
+
+We implemented this easily using `ENV` variables, a controller action, and Rails' built in I18n support. Here's how we did it.
 
 ## Remembering the user's location
 
-For better usability, we should have a way to remember the user's intended location before redirecting him or her away. This way, when the app exits maintenance, we can redirect the user back to the page they originally wanted. This is sometimes referred to as *friendly forwarding*. Friendly forwarding is a feature we can reuse in other places, so it's a good idea to implement it in a concern[^2] and mix it into `application_controller.rb`.
+For better usability, we should remember the user's intended location before redirecting him or her away. This way, when the app exits maintenance, we can redirect users back to the page they originally wanted. This is sometimes referred to as *friendly forwarding*. Friendly forwarding is a feature we can reuse in other places, so it's a good idea to implement it in a concern[^2] and mix it into `application_controller.rb`.
 
 {% highlight ruby %}
 # app/controllers/concerns/friendly_forwarding.rb
@@ -30,11 +32,11 @@ def store_location
 end
 {% endhighlight %}
 
-When called, the `store_location` method will save the request URL in the session, but only if it's a GET request [^1]. The `redirect_back_or` method takes a default route to use if no forwarding URL is present in the session, and an options hash. This way we can forward a flash message or any option that [`redirect_to`][2] accepts.
+When called, `store_location` will save the request URL in the session, but only if it's a GET request [^1]. The `redirect_back_or` method takes a default route to use if no forwarding URL is present in the session, and an options hash. This way we can forward the same options that [`redirect_to`][2] accepts, including flash messages.
 
 ## Maintenance mode
 
-For the actual logic, we will also use a concern that we'll mix into `application_controller.rb`.
+To implement maintenance mode, we use a concern that we mix into `application_controller.rb`.
 
 {% highlight ruby %}
 module MaintenanceMode
@@ -73,9 +75,7 @@ private
 end
 {% endhighlight %}
 
-The `MaintenanceMode` concern adds a `before_action` that redirects to the maintenance page if the mode is enabled unless the current IP address is whitelisted. Both maintenance mode and whitelisted IP addresses are stored in *ENV* variables.
-
-Now that our concerns are ready we should mix them into the application controller.
+Unless the current IP address is whitelisted, the `MaintenanceMode` concern redirects to the maintenance page if the mode is enabled.
 
 {% highlight ruby %}
 class ApplicationController < ActionController::Base
@@ -101,16 +101,16 @@ class MaintenanceController < ApplicationController
 end
 {% endhighlight %}
 
-The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page itself. This stops the application from going into an infinite loop. We also have to explicitly use `render` so that we can set the HTTP status code to to *503*, which stands for `:service_unavailable`. The default status code in Rails is *200*, or `:success`.
+The `skip_before_action` ensures that we don't check for maintenance mode when we are viewing the maintenance page itself. This stops the application from going into an infinite loop. We have to explicitly use `render` to set the HTTP status code to *503*, which stands for `:service_unavailable`. The default status code in Rails is *200*, or `:success`.
 
-We could stop now, but for better usability we should redirect away from the maintenance page and back to the app if the mode is disabled. This is a small change, and it's important--especially if your maintenance page is minimalistic, and has no navigation--because some users will refresh the page hoping that the maintenance page will go away by itself. If you don't redirect the user back, he or she could be stuck until frustrated enough to type the app's URL in the address bar. Plus, we made the effort to add friendly forwarding, and unless we make this change we will not have a chance to use it.
+We can stop now, but for better usability we should redirect away from the maintenance page and back to the app if the mode is disabled. It's a small change, but it's important--especially if your maintenance page has no navigation--because many users will refresh the page hoping the app will appear again. If we don't redirect the user back, he or she could be stuck until frustrated enough to type the app's root URL in the address bar. Plus, we made the effort to add friendly forwarding, and unless we make this change we will not have a chance to use it here.
 
-Inside the show action we want to redirect back to the application under two conditions:
+For `maintenance_controller#show` we should redirect back to the application under two conditions:
 
 1. If maintenance mode is disabled.
 2. If the IP address is whitelisted.
 
-We can use a before filter to add this extra functionality.
+We can use a `before_action` to add this extra functionality.
 
 {% highlight ruby %}
 class MaintenanceController < ApplicationController
@@ -130,7 +130,7 @@ end
 
 ## Using it
 
-To enter the application into maintenance mode, we set an `ENV` variable on Heroku.
+To enter maintenance mode, we set an `ENV` variable on Heroku.
 
 {% highlight text %}
 heroku config:set MAINTENANCE_MODE=enabled
@@ -152,7 +152,7 @@ heroku config:unset MAINTENANCE_MODE
 
 ## Testing it
 
-Our feature is also very easy to test. We want to test a number of conditions:
+We want to test a number of conditions:
 
 1. The app redirects to the maintenance page when the mode is enabled.
 2. The app does not redirect to the maintenance page when the mode is disabled, or if the current IP address is whitelisted.
@@ -217,7 +217,7 @@ And there it is, a flexible and dynamic maintenance mode for your Rails applicat
 
 ## Caveats
 
-This feature is useful when you need to restrict access while your Rails app is running. If your Rails app is down, then this is useless since the request will make it to the app and an error page will be served. In that case, you might want to implement a maintenance page at the DNS or [web server][3] level, or use Heroku's built in solution.
+This feature is useful when you need to restrict access but keep your app running. Otherwise, you might want to implement a maintenance page at the DNS or [web server][3] level, or use Heroku's built in solution.
 
 [1]: https://devcenter.heroku.com/articles/maintenance-mode
 [2]: http://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to
@@ -225,6 +225,5 @@ This feature is useful when you need to restrict access while your Rails app is 
 
 ### Footnotes
 
-[^1]: There actually is [an HTTP specification](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.htmlg) for redirecting POST requests. But it appears that most frameworks don't handle this requirement very well, so we generally don't want to redirect back if the user was posting a form. For more on this topic, see [this article on Programmers](http://programmers.stackexchange.com/questions/99894/why-doesnt-http-have-post-redirect).
+[^1]: There actually is [an HTTP specification](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.htmlg) for redirecting POST requests. But it appears that most frameworks don't handle this requirement adequatly, so we generally don't want to redirect back if the user was posting a form. For more on this topic, see [this article on Programmers](http://programmers.stackexchange.com/questions/99894/why-doesnt-http-have-post-redirect).
 [^2]: For example, when redirecting to the login page after a user requests a protected resource.
-

@@ -3,11 +3,11 @@ layout: post
 title: "Project Euler Problem 6: Sum Square Difference"
 ---
 
-In this post, I will demonstrate how to solve problem six in Project Euler in a programming language of your choice. Yes, that's correct, in any language!
+Let's solve problem six in Project Euler in a programming language of your choice. Yes, that's correct, you can choose!
 
 ### Spoiler alert
 
-If you have an academic interest in Project Euler, and you have not solved problem six, I suggest you do so before reading this post lest you deprive yourself of the opportunity to learn.
+If you have an academic interest in Project Euler, and you have not solved problem six, I suggest you do so before reading this post lest you deprive yourself of an opportunity to learn.
 
 ## The problem
 
@@ -15,11 +15,11 @@ This is one of the easiest Project Euler problems.
 
 > Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
 
-Up to $$n = 100$$ it is trivial, but we can use [math][2] to solve it up to massive numbers, like [a thousand quinquagintaquadringentillion][4] (that's $$10^{2703}$$, or 1 followed by 2703 zeros), that could otherwise take decades to solve even for a computer.
+Up to $$n = 100$$ it is trivial, but we can use [math][1] to solve it up to massive numbers, like [a thousand quinquagintaquadringentillion][2] (that's $$10^{2703}$$, or 1 followed by 2703 zeros), that could otherwise take years to solve even for a computer.
 
 ## Linear solution
 
-Sometimes the most obvious solution isn't necessarily the best one. Let's consider the problem in linear terms.
+Sometimes the most obvious solution isn't necessarily the best one. Let's consider the problem linearly.
 
 $$
 (1 + 2 + 3 + \cdots + 100)^2 + (1^2 + 2^2 + 3^2 + \cdots + 100^2)
@@ -35,7 +35,7 @@ For small numbers, this works well. But what if, instead of 100, you had to solv
 
 ## A better solution
 
-If you paid attention during elementary math&mdash;I didn't&mdash;you should know that there is a better way to express the equation. Theoretically, we can use mathematical induction to solve this problem up to any number.
+With the help of elementary math--specifically, mathematical induction--we can solve this problem up to any number.
 
 This is the square of the sum up to $$n$$.
 
@@ -49,19 +49,19 @@ $$
 1^2 + 2^2 + 3^2 + \cdots + n^2 = \frac{n(n + 1)(2n + 1)}{6}
 $$
 
-So the solution up to $$n$$ looks like this.
+And the solution up to $$n$$.
 
 $$
 \left(\frac{n(n + 1)}{2}\right)^2 - \frac{n(n + 1)(2n + 1)}{6}
 $$
 
-Now the solution is simple mathematics, and we can solve this problem up to nonsensical numbers in microseconds. Here's what it looks like in Ruby; it's not terribly interesting.
+With simple math we can solve this problem up to nonsensical numbers in microseconds. Here's the solution in Ruby; it's not terribly interesting.
 
 {% highlight ruby %}
 (n * (n + 1) / 2)**2 - (n * (n + 1)) * ((n * 2) + 1) / 6
 {% endhighlight %}
 
-To make it a bit more interesting I created [benchmarks][5] to illustrate the efficiency of four different techniques: Using map and reduce, enumerators, while loop, and induction. The earlier three were tested against $$n = 10^6$$, and the latter against a thousand quinquagintaquadringentillion, or $$10^{2703}$$.
+I was curious, so I created [benchmarks][3] to illustrate the efficiency of four different techniques: Using map and reduce, enumerators, while loop, and induction. I tested the earlier three against $$n = 10^6$$, and the latter against a thousand quinquagintaquadringentillion, or $$10^{2703}$$.
 
 {% highlight ruby %}
 def map_reduce(n)
@@ -115,7 +115,7 @@ function diff(n) {
 }
 {% endhighlight %}
 
-The same principle applies in Swift.
+Swift didn't fair much better.
 
 {% highlight swift %}
 func diff(n: Int) -> Int {
@@ -129,12 +129,10 @@ func diff(n: Int) -> Int {
 }
 {% endhighlight %}
 
-You can find all of the [sample code][5] including performance benchmarks using the techniques discussed on Github.
+You can find the [sample code][3] including benchmarks on Github.
 
-[1]: http://www.inkk.co/entries/80-project-euler-large-sum
-[2]: http://en.wikipedia.org/wiki/Mathematical_induction
-[3]: http://en.wikipedia.org/wiki/MapReduce
-[4]: http://en.wikipedia.org/wiki/Names_of_large_numbers
-[5]: https://gist.github.com/abitdodgy/b88a8018527107eb25c9
+[1]: http://en.wikipedia.org/wiki/Mathematical_induction
+[2]: http://en.wikipedia.org/wiki/Names_of_large_numbers
+[3]: https://gist.github.com/abitdodgy/b88a8018527107eb25c9
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
