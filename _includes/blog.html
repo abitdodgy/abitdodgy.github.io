@@ -1,0 +1,19 @@
+<section class="container text-xs-center m-y-3 has-divider" id="blog">
+    <h2 class="display-4 m-b-2">Ramblings & Disquiet</h2>
+    <p class="lead m-b-3">Occasionally I ramble on about things&mdash;and occasionally it's useful.</p>
+    <div class="row">
+        {% for post in site.posts %}
+            <div class="col-xs-12 m-b-2">
+                <time class="text-muted m-b-1">{{ post.date | date: "%b %-d, %Y" }}</time>
+                <h4>
+                    {% if post.external_url %}
+                        <a href="{{ post.external_url }}">{{ post.title }}</a>
+                    {% else %}
+                        <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+                    {% endif %}
+                </h4>
+            </div>
+        {% endfor %}
+    </div>
+    <p><a href="{{ "/feed.xml" | prepend: site.baseurl }}">{% include social/icon-rss.svg %}</a></p>
+</section>

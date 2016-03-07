@@ -1,0 +1,25 @@
+<footer class="outro" id="contact">
+  <div class="container">
+    <h2 class="display-4 m-b-2">Contact</h2>
+    <p class="lead m-b-3">I can be found lurking in several places. Go ahead, I love hearing from people.</p>
+    <ul class="nav nav-inline">
+        <li class="nav-item">
+            {% for link in site.social_links %}
+              <a href="{% if link.type == 'email' %}mailto:{% endif %}{{ link.url }}" class="nav-link" target="_blank">
+                  {% include social/icon-{{link.name}}.svg size=48 %}
+              </a>
+            {% endfor %}
+        </li>
+    </ul>
+  </div>
+
+  <div class="ocean">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/sun.png" width="32" height="32" id="emoji-sunset" class="emoji">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/cloud.png" width="24" height="24" id="emoji-sunset-cloud" class="emoji">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/cloud.png" width="20" height="20" id="emoji-sunset-cloud-2" class="emoji">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/cloud.png" width="24" height="24" id="emoji-sunset-cloud-moving" class="emoji">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/cloud.png" width="20" height="20" id="emoji-sunset-cloud-moving-lower" class="emoji">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/motor_boat.png" width="32" height="32" id="emoji-motor-boat" class="emoji">
+    <img class="emoji" src="{{ site.baseurl }}/assets/emoji/sailboat.png" width="32" height="32" id="emoji-sailboat" class="emoji">
+  </div>
+</footer>

@@ -1,0 +1,49 @@
+.lang-bar {
+  border-collapse: collapse;
+  display: table;
+  height: .2rem;
+  width: 100%;
+}
+
+$lang-bar-heights: (
+  sm: .1rem,
+  lg: .3rem,
+  xl: .5rem,
+);
+
+@each $name, $height in $lang-bar-heights {
+  .lang-bar-#{$name} {
+    height: $height;
+  }
+}
+
+.lang-bar-lang {
+  display: table-cell;
+  content: ' ';
+}
+
+$langs: (
+  coffeescript: #244776,
+  coldfusion: #ed2cd6,
+  css: #563d7c,
+  elixir: #6e4a7e,
+  html: #e44b23,
+  javascript: darken(#f1e05a, 10%),
+  other: #ededed,
+  ruby: #701516,
+  scss: #563d7c,
+  sql: #999
+);
+
+@each $lang, $color in $langs {
+  .lang-bar-lang-#{$lang} {
+    background-color: $color;
+  }
+}
+
+@each $lang, $color in $langs {
+  .lang-#{$lang} {
+    color: $color;
+    border-bottom: 2px solid $color;
+  }
+}

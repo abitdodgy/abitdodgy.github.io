@@ -1,0 +1,137 @@
+//
+// Emojis
+//
+
+.emoji {
+  position: absolute;
+}
+
+#emoji-me {
+  bottom: -1px;
+  left: 25%;
+}
+
+#emoji-tree {
+  bottom: -1px;
+  right: 30%;
+}
+
+#emoji-rocket {
+  animation: takeoff 6s 1 ease-in;
+  bottom: 0;
+  left: -10%;
+  transform: rotate(35deg);
+}
+
+#emoji-tree-small {
+  bottom: -1px;
+  right: 32%;
+}
+
+#emoji-house {
+  bottom: -2px;
+  left: 35%;
+}
+
+#emoji-cloud {
+  animation: bounceAcross 70s infinite linear;
+  animation-delay: -6s;
+  bottom: 190px;
+  left: 0;
+}
+
+#emoji-cloud-higher {
+  animation: bounceAcross 60s infinite linear;
+  animation-delay: -22s;
+  bottom: 200px;
+  left: 0;
+}
+
+#emoji-cloud-lower {
+  animation: bounceAcross 90s infinite linear;
+  animation-delay: -33s;
+  bottom: 170px;
+  left: 0;
+}
+
+#emoji-sun {
+  animation: bounceRotate 5s ease-in-out infinite;
+  bottom: 100px;
+  left: 30%;
+}
+
+#emoji-sun-cloud {
+  animation: bounce 5s ease-in-out infinite;
+  animation-delay: 1s;
+  bottom: 100px;
+  left: 31%;
+}
+
+#emoji-stars {
+  animation: flip 10s ease-in-out infinite;
+  animation-delay: 10s;
+  right: 30%;
+  top: 250px;
+  transform-style: preserve-3d;
+}
+
+#emoji-satelite {
+  animation: rotate 15s linear infinite;
+  left: 10%;
+  top: 80px;
+}
+
+#emoji-moon {
+  animation: bounceAtAngle 5s infinite ease-in-out;
+  right: 20%;
+  top: 50px;
+}
+
+#emoji-mosque {
+  bottom: -1px;
+  left: 15%;
+}
+
+#emoji-motor-boat {
+  animation: flyby 50s linear infinite;
+  right: 0;
+  top: -129px;
+}
+
+#emoji-sunset {
+  animation: bounceRotate 5s ease-in-out infinite;
+  right: 50%;
+  top: -70px;
+}
+
+#emoji-sunset-cloud {
+  animation: bounce 5s ease-in-out infinite;
+  animation-delay: 1s;
+  left: 51%;
+  top: -70px;
+}
+
+#emoji-sunset-cloud-moving {
+  animation: bounceAcross 50s linear infinite;
+  left: 0;
+  top: -160px;
+}
+
+#emoji-sunset-cloud-moving-lower {
+  animation: bounceAcross 70s linear infinite;
+  left: 0;
+  top: -200px;
+}
+
+#emoji-sunset-cloud-2 {
+  animation: bounce 15s ease-in-out infinite;
+  animation-delay: 3s;
+  left: 47%;
+  top: -65px;
+}
+
+#emoji-sailboat {
+  animation: wobble 10s ease-in-out infinite;
+  right: 55%;
+  top: -31px;
+}

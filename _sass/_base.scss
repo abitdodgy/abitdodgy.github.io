@@ -1,0 +1,41 @@
+//
+// Load custom variables file to override Bootstrap default variables
+@import "bootstrap/custom/custom";
+
+//
+// Load Bootstrap so that all variables are available
+@import "bootstrap/scss/bootstrap";
+
+//
+// Load overriden Bootstrap components
+@import "bootstrap/custom/card";
+
+//
+// Custom CSS
+@import "animation";
+@import "emoji";
+@import "intro";
+@import "lang_bar";
+@import "outro";
+
+.nav-primary {
+  font-family: $headings-font-family;
+}
+
+.has-divider {
+  &:before {
+    content: ' ';
+    border-top: 2px solid $gray-lighter;
+    display: block;
+    margin: 3rem auto;
+    width: 5rem;
+  }
+
+  &-sm:before {
+    margin: 2rem auto;
+  }
+}
+
+.text-cursive {
+  font-family: $font-family-cursive;
+}

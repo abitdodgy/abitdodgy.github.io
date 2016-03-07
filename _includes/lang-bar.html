@@ -1,0 +1,3 @@
+{% for lang in include.langs %}
+	<span class="lang-bar-lang lang-bar-lang-{{ lang.title | downcase }}" style="width: {{ lang.ratio }}%;"></span>
+{% endfor %}
