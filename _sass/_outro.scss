@@ -2,7 +2,7 @@
   background: linear-gradient($body-bg, $sky-orange 90%);
 
   // Without this we get x-axis scrolling
-  overflow-x: hidden;
+  overflow: hidden;
 
   padding: 10rem 0 0;
   text-align: center;
