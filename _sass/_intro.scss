@@ -6,6 +6,9 @@
   background: linear-gradient($sky-blue, $sky-orange, $body-bg);
   margin: 0 auto;
 
+  // Without this we get x-axis scrolling
+  overflow-x: hidden;
+
   // Emojis are absolute position
   position: relative;
 
