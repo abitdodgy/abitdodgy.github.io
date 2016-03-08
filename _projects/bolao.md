@@ -2,8 +2,8 @@
 category: "featured"
 cover_image: "http://placehold.it/265x150"
 description: >
-  Bolão Brasil 2014 is a fun and social score-prediction game I wrote for the World Cup.
-  Play, compete, and win against your friends by making as many correct predictions as possible.
+  Bolão Brasil 2014 is a fun and social score prediction game I wrote for the World Cup.
+  Play, compete and win against your friends by making as many correct predictions as possible.
 languages:
   - title: "Ruby"
     ratio: "93"
