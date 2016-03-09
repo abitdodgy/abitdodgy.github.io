@@ -17,10 +17,12 @@
 }
 
 #emoji-rocket {
-  animation: takeoff 6s 1 ease-in;
+  animation: takeoff 8s 1 ease-in;
+  animation-delay: 3s;
+  animation-fill-mode: forwards;
   bottom: 0;
-  left: -10%;
-  transform: rotate(35deg);
+  right: 20%;
+  transform: rotate(-45deg);
 }
 
 #emoji-tree-small {
@@ -33,25 +35,25 @@
   left: 35%;
 }
 
-#emoji-cloud {
-  animation: bounceAcross 70s infinite linear;
+#emoji-cloud-moving-sm-2 {
+  animation: bounceAcross 100s infinite linear;
   animation-delay: -6s;
   bottom: 190px;
-  left: 0;
+  left: -200px;
 }
 
-#emoji-cloud-higher {
-  animation: bounceAcross 60s infinite linear;
-  animation-delay: -22s;
-  bottom: 200px;
-  left: 0;
-}
-
-#emoji-cloud-lower {
+#emoji-cloud-moving-lg {
   animation: bounceAcross 90s infinite linear;
-  animation-delay: -33s;
+  animation-delay: -45s;
+  bottom: 200px;
+  left: -200px;
+}
+
+#emoji-cloud-moving-sm {
+  animation: bounceAcross 120s infinite linear;
+  animation-delay: -65s;
   bottom: 170px;
-  left: 0;
+  left: -200px;
 }
 
 #emoji-sun {
@@ -64,7 +66,7 @@
   animation: bounce 5s ease-in-out infinite;
   animation-delay: 1s;
   bottom: 100px;
-  left: 31%;
+  left: 31.5%;
 }
 
 #emoji-stars {
@@ -92,46 +94,46 @@
   left: 15%;
 }
 
-#emoji-motor-boat {
-  animation: flyby 50s linear infinite;
-  right: 0;
-  top: -129px;
-}
-
 #emoji-sunset {
   animation: bounceRotate 5s ease-in-out infinite;
   right: 50%;
   top: -70px;
 }
 
-#emoji-sunset-cloud {
+#emoji-sunset-cloud-lg {
   animation: bounce 5s ease-in-out infinite;
   animation-delay: 1s;
   left: 51%;
   top: -70px;
 }
 
-#emoji-sunset-cloud-moving {
-  animation: bounceAcross 50s linear infinite;
-  left: 0;
-  top: -160px;
+#emoji-sunset-cloud-sm {
+  animation: bounce 8s ease-in-out infinite;
+  animation-delay: 2s;
+  left: 45%;
+  top: -65px;
 }
 
-#emoji-sunset-cloud-moving-lower {
-  animation: bounceAcross 70s linear infinite;
-  left: 0;
+#emoji-sunset-cloud-moving-lg {
+  animation: bounceAcross 90s linear infinite;
+  left: -50px;
   top: -200px;
 }
 
-#emoji-sunset-cloud-2 {
-  animation: bounce 15s ease-in-out infinite;
-  animation-delay: 3s;
-  left: 47%;
-  top: -65px;
+#emoji-sunset-cloud-moving-sm {
+  animation: bounceAcross 130s linear infinite;
+  left: 0;
+  top: -250px;
 }
 
 #emoji-sailboat {
   animation: wobble 10s ease-in-out infinite;
   right: 55%;
   top: -31px;
+}
+
+#emoji-motor-boat {
+  animation: flyby 50s linear infinite;
+  right: 0;
+  top: -129px;
 }

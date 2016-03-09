@@ -1,4 +1,4 @@
-.outro {
+#outro {
   background: linear-gradient($body-bg, $sky-orange 90%);
 
   // Without this we get x-axis scrolling
@@ -8,7 +8,7 @@
   text-align: center;
 }
 
-.ocean {
+#ocean {
   background: linear-gradient(to right, $ocean-deep 0%, $ocean-shallow 50%, $ocean-deep 100%);
   position: relative;
   padding: 3rem 0;
