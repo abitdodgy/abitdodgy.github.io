@@ -4,7 +4,7 @@
     <div class="row">
         {% for post in site.posts %}
             <div class="col-xs-12 m-b-2">
-                <time class="text-muted m-b-1" datetime="{{ post.date }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+                <time class="text-muted m-b-1" datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date: "%b %-d, %Y" }}</time>
                 <h4>
                     {% if post.external_url %}
                         <a href="{{ post.external_url }}">{{ post.title }}</a>
