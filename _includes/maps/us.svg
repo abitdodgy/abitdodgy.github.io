@@ -1,6 +1,4 @@
-﻿<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="128px" height="128px" viewBox="0 0 1024.000000 1024.000000" preserveAspectRatio="xMidYMid meet">
+﻿<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="128px" height="128px" viewBox="0 0 1024.000000 1024.000000" preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)" fill="{{ include.fill | default: '#ccc' }}" stroke="none">
 <path d="M9767 8370 l-55 -50 -25 20 c-25 20 -26 20 -36 2 -26 -48 -43 -197
 -36 -309 5 -92 4 -117 -10 -142 -10 -21 -14 -43 -9 -65 9 -49 -3 -76 -40 -91

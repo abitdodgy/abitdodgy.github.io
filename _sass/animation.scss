@@ -94,18 +94,6 @@
   }
 }
 
-@keyframes flip {
-  0% {
-    transform: rotateY(0);
-  }
-  50% {
-    transform: rotateY(180deg);
-  }
-  100% {
-    transform: rotateY(0);
-  }
-}
-
 @keyframes flyby {
   0% {
     transform: translate3d(0, 102px, 0);
@@ -127,16 +115,4 @@
   80% { transform: rotate(-2deg) }
   90% { transform: rotate(2deg) }
   100% { transform: rotate(-2deg) }
-}
-
-@keyframes twinkle {
-  0% {
-    opacity: .5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: .5;
-  }
 }

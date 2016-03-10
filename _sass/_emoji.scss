@@ -6,7 +6,7 @@
   position: absolute;
 }
 
-#emoji-me {
+#emoji-runner {
   bottom: -1px;
   left: 25%;
 }
@@ -25,9 +25,9 @@
   transform: rotate(-45deg);
 }
 
-#emoji-tree-small {
+#emoji-tree-sm {
   bottom: -1px;
-  right: 32%;
+  right: 34%;
 }
 
 #emoji-house {
@@ -69,14 +69,6 @@
   left: 31.5%;
 }
 
-#emoji-stars {
-  animation: flip 10s ease-in-out infinite;
-  animation-delay: 10s;
-  right: 30%;
-  top: 250px;
-  transform-style: preserve-3d;
-}
-
 #emoji-satelite {
   animation: rotate 15s linear infinite;
   left: 10%;
@@ -89,7 +81,7 @@
   top: 50px;
 }
 
-#emoji-mosque {
+#emoji-tree-left {
   bottom: -1px;
   left: 15%;
 }
@@ -129,7 +121,7 @@
 #emoji-sailboat {
   animation: wobble 10s ease-in-out infinite;
   right: 55%;
-  top: -31px;
+  top: 30px;
 }
 
 #emoji-motor-boat {
