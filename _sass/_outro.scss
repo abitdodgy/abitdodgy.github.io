@@ -1,16 +1,9 @@
 .outro {
-  background: linear-gradient($body-bg, $sky-orange 90%);
+  background: linear-gradient($body-bg, $sky-blue 90%);
 
   // Without this we get x-axis scrolling
   overflow: hidden;
 
   padding: 10rem 0 0;
   text-align: center;
-}
-
-#ocean {
-  background: linear-gradient(to right, $ocean-deep 0%, $ocean-shallow 50%, $ocean-deep 100%);
-  position: relative;
-  padding: 3rem 0;
-  margin: 10rem 0 0;
 }
