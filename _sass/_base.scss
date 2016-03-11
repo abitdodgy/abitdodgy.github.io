@@ -35,3 +35,12 @@
 .text-cursive {
   font-family: $font-family-cursive;
 }
+
+.nav-link-social svg {
+  fill: $link-color;
+  transition: all .2s ease-in-out;
+
+  &:hover {
+    fill: $link-hover-color;
+  }
+}

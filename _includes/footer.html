@@ -5,7 +5,10 @@
     <ul class="nav nav-inline">
         <li class="nav-item">
             {% for link in site.social_links %}
-              <a href="{% if link.type == 'email' %}mailto:{% endif %}{{ link.url }}" class="nav-link" target="_blank">
+              <a
+                href="{% if link.type == 'email' %}mailto:{% endif %}{{ link.url }}"
+                class="nav-link nav-link-social"
+                target="_blank">
                   {% include social/icon-{{link.name}}.svg size=48 %}
               </a>
             {% endfor %}
