@@ -39,9 +39,7 @@ $langs: (
   .lang-bar-lang-#{$lang} {
     background-color: $color;
   }
-}
 
-@each $lang, $color in $langs {
   .lang-#{$lang} {
     color: $color;
     border-bottom: 2px solid $color;

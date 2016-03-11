@@ -1,15 +1,4 @@
-@keyframes takeoff {
-  0% {
-    transform: rotate(-45deg);
-  }
-  50% {
-    transform: translate(0, -3000px) rotate(-45deg);
-  }
-  100% {
-    transform: translate(0, 7px) rotate(110deg);
-  }
-}
-
+// This one is for the clouds, so the move slight up and down as the fly by.
 @keyframes bounceAcross {
   0% {
     transform: translate3d(0px, 100px, 0);
@@ -46,6 +35,7 @@
   }
 }
 
+// This one is for the cloud next to the sun.
 @keyframes bounce {
   0% {
     transform: translateY(0);
@@ -58,18 +48,7 @@
   }
 }
 
-@keyframes rotate {
-  0% {
-    transform: rotate(0);
-  }
-  50% {
-    transform: rotate(180deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
+// This one is for the sun, to make it rotate back and forth it wobbles up and down
 @keyframes bounceRotate {
   0% {
     transform: translateY(0) rotate(0);
@@ -80,39 +59,4 @@
   100% {
     transform: translateY(0) rotate(0);
   }
-}
-
-@keyframes bounceAtAngle {
-  0% {
-    transform: translateY(0) rotate(30deg);
-  }
-  50% {
-    transform: translateY(10px) rotate(30deg);
-  }
-  100% {
-    transform: translateY(0) rotate(30deg);
-  }
-}
-
-@keyframes flyby {
-  0% {
-    transform: translate3d(0, 102px, 0);
-  }
-  100% {
-    transform: translate3d(-1600px, 102px, 0);
-  }
-}
-
-@keyframes wobble {
-  0% { transform: rotate(0) }
-  10% { transform: rotate(2deg) }
-  20% { transform: rotate(-2deg) }
-  30% { transform: rotate(2deg) }
-  40% { transform: rotate(-2deg) }
-  50% { transform: rotate(2deg) }
-  60% { transform: rotate(-2deg) }
-  70% { transform: rotate(2deg) }
-  80% { transform: rotate(-2deg) }
-  90% { transform: rotate(2deg) }
-  100% { transform: rotate(-2deg) }
 }
