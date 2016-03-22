@@ -8,8 +8,6 @@
 
 //
 // Custom CSS
-@import "animation";
-@import "emoji";
 @import "intro";
 @import "lang_bar";
 @import "outro";
@@ -23,7 +21,7 @@
     content: ' ';
     border-top: 2px solid $gray-lighter;
     display: block;
-    margin: 3rem auto;
+    margin: 5rem auto;
     width: 5rem;
   }
 

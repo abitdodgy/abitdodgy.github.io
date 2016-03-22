@@ -1,7 +1,8 @@
 ---
 category: "web apps"
 cover_image: "http://placehold.it/265x150"
-description: "Gamezilla is a marketplace for people to buy and sell their video games. My objective was to create a great user experience where people can list, buy, and sell their games with as little effort as possible."
+description: >
+  Gamezilla was an e-commerce marketplace for video game enthusiasts to buy, sell, and exchange their video games. It had a great UX, where listing, buying, and selling was distilled into a few clicks.
 languages:
   - title: "Ruby"
     ratio: "85"

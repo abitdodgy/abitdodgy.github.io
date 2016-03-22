@@ -2,7 +2,7 @@
 category: "libraries"
 cover_image: "http://placehold.it/265x150"
 description: >
-  This Ruby gem allows you to use lazy lookup with custom I18n scopes, making it easier to manage and organise your translations.
+  This Ruby gem lets you to use lazy lookup with custom I18n scopes, making it easier to manage and organise your locale files.
 languages:
   - title: "Ruby"
     ratio: "100"

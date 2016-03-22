@@ -1,7 +1,8 @@
 ---
 category: "libraries"
 cover_image: "http://placehold.it/265x150"
-description: "WordsCounted is an extensible Natural Language Processor written in Ruby. It features a kick-ass tokeniser, and great documentation."
+description: >
+  WordsCounted is an extensible Natural Language Processor written in Ruby. I used it as a natural language analysis tool for Inkk.
 languages:
   - title: "Ruby"
     ratio: "100"

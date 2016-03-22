@@ -1,14 +1,5 @@
 #intro {
-  background: linear-gradient($sky-blue, $sky-orange, $body-bg);
   margin: 0 auto;
-
-  // Without this we get x-axis scrolling
-  overflow: hidden;
-
-  text-align: center;
-}
-
-#intro-scene {
   padding: 6rem 0 9rem;
-  position: relative;
+  text-align: center;
 }

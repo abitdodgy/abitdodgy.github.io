@@ -1,13 +1,8 @@
 ---
-category: "featured"
+category: "recent"
 cover_image: "index/nimbus.jpg"
 description: >
-  Nimbus Workspaces is a project management application tailored for civil construction companies. I am responsible for designing and implementing new features, monitoring and maintaining the code base, and reviewing pull requests.
-q_and_a:
-  - question: "What did I learn?"
-    answer: "<strong>I learned</strong> how to manage and grow a complex code base while maintaining the ability to design and implement new features quickly."
-  - question: What is cool about it?
-    answer: "<strong>What's great</strong> about this app is it its performant and extensive activity feed."
+  Nimbus Workspaces is a SaaS project management app for civil construction companies. I design and implement new features and maintain existing ones.
 languages:
   - title: "Ruby"
     ratio: "75"
