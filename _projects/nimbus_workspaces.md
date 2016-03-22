@@ -2,7 +2,7 @@
 category: "recent"
 cover_image: "index/nimbus.jpg"
 description: >
-  Nimbus Workspaces is a SaaS project management app for civil construction companies. I design and implement new features and maintain existing ones.
+  Nimbus Workspaces is a SaaS project management app for civil construction companies. I design and implement new features, and maintain existing ones.
 languages:
   - title: "Ruby"
     ratio: "75"
