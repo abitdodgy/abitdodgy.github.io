@@ -1,9 +1,4 @@
 .outro {
-  background: linear-gradient($body-bg, $sky-blue 90%);
-
-  // Without this we get x-axis scrolling
-  overflow: hidden;
-
   padding: 10rem 0;
   text-align: center;
 }

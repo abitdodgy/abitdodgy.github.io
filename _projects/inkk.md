@@ -1,7 +1,7 @@
 ---
 category: "web apps"
 cover_image: "http://placehold.it/265x150"
-description: "Inkk was an attempt to create a social blogging platform inspired by Medium. It featured a clean interface and a way to curate and manage collections of articles written by others."
+description: "Inkk is a social blogging platform inspired by Medium. It has a clean interface and a great way to curate and manage content."
 languages:
   - title: "Ruby"
     ratio: "70"

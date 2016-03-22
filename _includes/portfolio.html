@@ -4,15 +4,15 @@
         {% include lang-bar.html langs=langs %}
     </div>
     <header class="text-xs-center m-b-3">
-        <h2 class="display-4 m-b-2">Selected Works</h2>
+        <h2 class="display-4 m-b-2">Projects</h2>
         <p class="lead">
             I work with
             <span class="lang lang-ruby">Ruby</span>
             and
             <span class="lang lang-ruby">Ruby on Rails</span>.
-            I enjoy working with
+            Recently, I've gotten into functional programming, particularly
             <span class="lang lang-elixir">Elixir</span>.
-            I have experience with a variety of technologies including
+<!--             I have experience with a variety of technologies including
             <span class="lang lang-sql">Postgresql</span>,
             <span class="lang lang-coffeescript">CoffeeScript</span>,
             <span class="lang lang-javascript">JavaScript</span>,
@@ -20,12 +20,12 @@
             <span class="lang lang-scss">SCSS</span>,
             and
             <span class="lang lang-html">HTML</span>.
-        </p>
+ -->        </p>
     </header>
 
     {% assign categories = site.projects | sort: 'position' | group_by: 'category' %}
     {% for category in categories %}
-        <h3 class="text-xs-center text-uppercase has-divider has-divider-sm">{{ category.name }}</h3>
+        <h3 class="text-xs-center text-capitalize has-divider has-divider-sm">{{ category.name }}</h3>
         <div class="row">
             {% for project in category.items %}
                 <div class="col-xs-12 col-sm-6 col-md-4 m-y-1">

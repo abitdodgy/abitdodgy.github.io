@@ -3,31 +3,18 @@
 // Copy variables from `_variables.scss` to this file to override default values
 // without modifying source files.
 
-@import url(http://fonts.googleapis.com/css?family=Francois+One);
-@import url(https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two);
+@import url(https://fonts.googleapis.com/css?family=Handlee);
+@import url(https://fonts.googleapis.com/css?family=Roboto+Slab);
 
 // Typography
 //
 // Font, line-height, and color for body text, headings, and more.
 
-$font-family-cursive:    'Shadows Into Light Two', cursive;
-
-$headings-font-family:   "Francois One", sans-serif;
+$font-family-base:      'Roboto Slab', sans-serif;
+$font-family-cursive:   'Handlee', cursive;
 
 // Body
 //
 // Settings for the `<body>` element.
 
-$body-bg:    #fefefe;
-
-
-//  Custom colours
-//
-// I use these for my theme and background gradients.
-
-$sky-blue: #a8bef3;
-$sky-orange: #f3d9a8;
-
-$ocean-sky: #fad9c7;
-$ocean-shallow: #cddcff;
-$ocean-deep: #5674ba;
+$body-bg: #fefefe;

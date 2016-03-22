@@ -2,7 +2,7 @@
 category: "libraries"
 cover_image: "http://placehold.it/265x150"
 description: >
-  Snakes & Ladders is an OOP port of, well, Snakes and Ladders (Chutes & Ladders), the classic board game. Play it in a terminal of your choice.
+  Snakes & Ladders is an object-oriented implementation (with my own twist) of, well, Snakes and Ladders, the classic board game.
 languages:
   - title: "Ruby"
     ratio: "100"
