@@ -11,7 +11,7 @@
 
         <div class="lang-bar lang-bar-lg m-y-1">
             {% assign langs = project.languages | sort: 1 %}
-            {% include lang-bar.html langs=langs %}
+            {% include index/lang-bar.html langs=langs %}
         </div>
 
         <p class="card-text">{{ project.description }}</p>

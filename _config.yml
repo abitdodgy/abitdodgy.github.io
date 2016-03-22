@@ -8,11 +8,12 @@
 # Site settings
 title: "Mohamad El-Husseini"
 email: "husseini.mel@gmail.com"
-description: > # this means to ignore newlines until "baseurl:"
-  The personal website and portfolio of Mohamad El-Husseini.
-baseurl: "" # the subpath of your site, e.g. /blog
+description: "The personal website and portfolio of Mohamad El-Husseini."
+
+# The subpath of your site, e.g. /blog
 url: "http://mohamad.im" # the base hostname & protocol for your site
-blog_url: "http://blog.mohamad.im" # the base hostname & protocol for your site
+baseurl: ""
+blog_url: "http://blog.mohamad.im"
 
 # Use these to easily build social navs
 social_links:
@@ -35,6 +36,7 @@ gems: []
 
 collections:
   - projects
+  - instagrams
 
 # This constructs the languages bar
 languages:
@@ -50,3 +52,5 @@ languages:
     ratio: "10"
   - title: "CSS"
     ratio: "20"
+
+
