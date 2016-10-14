@@ -1,0 +1,23 @@
+<div class="card">
+    <div class="card-block">
+        {% if featured_project.open_source %}
+            <a href="{{ featured_project.repo_link }}" title="View {{ featured_project.title }} on Github" class="pull-xs-right">
+                {% include social/icon-github.svg size=32 %}
+            </a>
+        {% endif %}
+
+        <h5 class="card-title">{{ featured_project.title }}</h5>
+        <h6 class="card-subtitle text-muted">{{ featured_project.platform }}</h6>
+
+        <div class="lang-bar lang-bar-lg m-y-1">
+            {% assign langs = featured_project.languages | sort: 1 %}
+            {% include index/lang-bar.html langs=langs %}
+        </div>
+
+        <p class="card-text">{{ featured_project.description }}</p>
+
+        {% for link in featured_project.links %}
+            <a href="{{ link.url }}" target="_blank" class="card-link">{{ link.title }}</a>
+        {% endfor %}
+    </div>
+</div>

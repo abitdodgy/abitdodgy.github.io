@@ -14,6 +14,7 @@ description: "The personal website and portfolio of Mohamad El-Husseini."
 url: "http://mohamad.im" # the base hostname & protocol for your site
 baseurl: ""
 blog_url: "http://blog.mohamad.im"
+repo_url: "https://github.com/abitdodgy/abitdodgy.github.io"
 
 # Use these to easily build social navs
 social_links:
@@ -37,6 +38,7 @@ markdown: kramdown
 gems: []
 
 collections:
+  - featured_projects
   - projects
   - instagrams
 
