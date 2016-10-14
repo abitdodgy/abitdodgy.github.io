@@ -1,8 +1,8 @@
 ---
-category: "libraries"
+category: "recent work"
 cover_image: "http://placehold.it/265x150"
 description: >
-  WordsCounted is an extensible Natural Language Processor written in Ruby. I used it as a natural language analysis tool for Inkk.
+  My most popular GitHub project, this is an extensible Natural Language Processor written in Ruby and used as an analysis tool in other projects.
 languages:
   - title: "Ruby"
     ratio: "100"
@@ -14,5 +14,6 @@ links:
 open_source: true
 platform: "Ruby"
 position: 2
+repo_link: "https://github.com/abitdodgy/words_counted"
 title: "WordsCounted"
 ---

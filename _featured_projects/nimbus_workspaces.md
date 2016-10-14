@@ -1,8 +1,8 @@
 ---
-category: "recent"
+category: "recent work"
 cover_image: "index/nimbus.jpg"
 description: >
-  Nimbus Workspaces is a SaaS project management app for civil construction companies. I design and implement new features, and maintain existing ones.
+  I co-founded and developed Nimbus Workspaces, a SaaS project management web application for civil construction companies.
 languages:
   - title: "Ruby"
     ratio: "75"
@@ -15,7 +15,7 @@ languages:
 links:
   - title: "Visit"
     url: "https://www.nimbusws.com.br"
-platform: "Ruby on Rails"
+platform: "Ruby on Rails / Heroku"
 position: 1
 title: "Nimbus Workspaces"
 ---
