@@ -2,7 +2,7 @@
 category: "Stuff I've Shipped"
 cover_image: "http://placehold.it/265x150"
 description: >
-  An experimental social blogging platform written Ruby on Rails and heavily inspired by early versions of Medium.
+  An experimental social blogging platform written in Ruby on Rails and heavily inspired by early versions of Medium.
 languages:
   - title: "Ruby"
     ratio: "60"
