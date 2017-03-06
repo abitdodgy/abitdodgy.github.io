@@ -1,8 +1,8 @@
 ---
-category: "recent work"
+category: "Stuff I've Shipped"
 cover_image: "http://placehold.it/265x150"
 description: >
-  My most popular GitHub project, this is an extensible Natural Language Processor written in Ruby and used as an analysis tool in other projects.
+  An open source and lightweight extensible Natural Language Processor written in Ruby and features its own nifty website.
 languages:
   - title: "Ruby"
     ratio: "100"
@@ -13,7 +13,7 @@ links:
     url: "https://github.com/abitdodgy/words_counted"
 open_source: true
 platform: "Ruby"
-position: 2
+position: 4
 repo_link: "https://github.com/abitdodgy/words_counted"
 title: "WordsCounted"
 ---

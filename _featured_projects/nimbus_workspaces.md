@@ -1,8 +1,8 @@
 ---
-category: "recent work"
+category: "Stuff I've Shipped"
 cover_image: "index/nimbus.jpg"
 description: >
-  I co-founded and developed Nimbus Workspaces, a SaaS project management web application for civil construction companies.
+  I co-founded and developed Nimbus Workspaces, a SaaS document management web application for construction companies and architects.
 languages:
   - title: "Ruby"
     ratio: "75"

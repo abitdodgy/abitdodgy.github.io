@@ -6,11 +6,11 @@
     <header class="text-xs-center m-b-3">
         <h2 class="display-4 m-b-2">Work</h2>
         <p class="lead">
-            I love
+            I love imagining and building products, and I have a track record of delivering innovation. I love writing code too. I enjoy
             <span class="lang lang-ruby">Ruby</span>
             and
             <span class="lang lang-ruby">Ruby on Rails</span>.
-            Although, I have a serious crush on functional programming, particularly
+            I have a serious crush on
             <span class="lang lang-elixir">Elixir</span>.
         </p>
     </header>
@@ -18,27 +18,13 @@
     {% assign categories = site.featured_projects | sort: 'position' | group_by: 'category' %}
     {% for category in categories %}
         <h3 class="text-xs-center text-capitalize has-divider has-divider-sm">{{ category.name }}</h3>
+        <p>{{ collection.subtitle }}</p>
         <div class="row">
             {% for featured_project in category.items %}
                 <div class="col-xs-12 col-sm-6 col-md-4 m-y-1">
                     {% include featured_project.html %}
                 </div>
             {% endfor %}
-        </div>
-    {% endfor %}
-
-    <h3 class="text-xs-center text-capitalize has-divider has-divider-sm m-b-2">Honorable Mentions</h3>
-    {% for project in site.projects %}
-        <div class="row">
-            <div class="col-xs-12 text-xs-center m-y-1">
-                <h4><a href="{{ project.url }}" target="_blank" class="card-link">{{ project.title }}</a></h4>
-                <p>{{ project.description }}</p>
-                <ul class="list-inline">
-                    {% for item in project.stack %}
-                        <li class="list-inline-item text-muted">{{ item }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
         </div>
     {% endfor %}
 </section>
