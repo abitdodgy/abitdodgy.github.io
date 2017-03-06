@@ -11,7 +11,7 @@ languages:
     ratio: "30"
 links:
   - title: "Visit"
-    url: "https://rubywordcount.com"
+    url: "http://rubywordcount.com"
 platform: "Sinatra"
 position: 6
 title: "Ruby Word Count"
