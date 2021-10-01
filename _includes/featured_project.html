@@ -15,9 +15,10 @@
         </div>
 
         <p class="card-text">{{ featured_project.description }}</p>
-
-        {% for link in featured_project.links %}
+<!--
+        { for link in featured_project.links }
             <a href="{{ link.url }}" target="_blank" class="card-link">{{ link.title }}</a>
-        {% endfor %}
+        { endfor }
+-->
     </div>
 </div>
