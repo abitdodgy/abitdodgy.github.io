@@ -1,6 +1,6 @@
 ---
-image_id: "_-N_pKSDQo"
-title: "Mohamad's World Famous Hummus"
-date: "2015-12-31T22:00:03+00:00"
-display_date: "Dec 31, 2015 at 2:00pm PST"
+image_id: "CPyyehqsky8"
+title: "Boston Common"
+date: "2021-06-06T00:00:00+00:00"
+display_date: "Jun 6, 2021"
 ---

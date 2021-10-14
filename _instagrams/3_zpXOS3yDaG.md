@@ -1,6 +1,6 @@
 ---
-image_id: "zpXOS3yDaG"
-title: "Riviera de São Lorenzo"
-date: "2015-02-28T13:19:55+00:00"
-display_date: "Feb 28, 2015 at 5:19am PST"
+image_id: "CRPEHeJs8jx"
+title: "Disney's Hollywood Studios"
+date: "2021-02-12T00:00:00+00:00"
+display_date: "Jul 12, 2021"
 ---
