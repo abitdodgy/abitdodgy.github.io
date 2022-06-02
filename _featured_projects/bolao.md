@@ -2,7 +2,7 @@
 category: "Stuff I've Shipped"
 cover_image: "http://placehold.it/265x150"
 description: >
-  A social score-guessing game I wrote for the World Cup. Over 1k games, 200k predictions, and an infinite amount of banter were shared during its short life.
+  A social game I wrote for the World Cup. Over 1k games, 200k predictions, and an infinite amount of banter were shared during its life.
 languages:
   - title: "Ruby"
     ratio: "70"

@@ -2,7 +2,7 @@
 category: "Stuff I've Shipped"
 cover_image: "http://placehold.it/265x150"
 description: >
-  An open source and lightweight extensible Natural Language Processor written in Ruby and features its own nifty website.
+  An open-source and lightweight extensible Natural Language Processor written in Ruby and features a nifty web app.
 languages:
   - title: "Ruby"
     ratio: "100"
